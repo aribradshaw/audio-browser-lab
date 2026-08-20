@@ -4,7 +4,7 @@ on:
     branches: [main]
   pull_request:
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 concurrency:
@@ -12,18 +12,53 @@ concurrency:
   cancel-in-progress: true
 jobs:
   test:
+    if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v7
         with:
           node-version: 22
           cache: npm
       - run: npm ci
+      - name: Record production version and DevLog entry
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: npm run release:auto
+        env:
+          DEVLOG_PRODUCTION: 'true'
+          DEVLOG_BRANCH: ${{ github.ref_name }}
+          DEVLOG_COMMIT_SHA: ${{ github.sha }}
+          DEVLOG_COMMIT_SUBJECT: ${{ github.event.head_commit.message }}
+          DEVLOG_AUTHOR_NAME: ${{ github.event.head_commit.author.name }}
+          DEVLOG_AUTHOR_LOGIN: ${{ github.actor }}
+      - name: Enforce production release alignment
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: npm run release:auto:check
+        env:
+          DEVLOG_PRODUCTION: 'true'
+          DEVLOG_BRANCH: ${{ github.ref_name }}
+          DEVLOG_COMMIT_SHA: ${{ github.sha }}
+          DEVLOG_COMMIT_SUBJECT: ${{ github.event.head_commit.message }}
       - run: npm run check
       - run: npm test
       - run: npm run build
       - run: npm run pack:check
+      - name: Persist generated release metadata
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add package.json package-lock.json config/devlog-releases.json packages/api/package.json packages/browser/package.json packages/cli/package.json packages/cli/src/library.ts packages/core/package.json packages/howler/package.json packages/mcp/package.json packages/mcp/src/index.ts packages/wavesurfer/package.json
+          if git diff --cached --quiet; then
+            echo "Release metadata already exists for this production commit."
+          else
+            VERSION="$(node -p 'require("./package.json").version')"
+            git commit -m "chore(release): Audio Browser Lab v${VERSION}"
+            git push origin "HEAD:${{ github.ref_name }}"
+          fi
       - name: Upload Pages artifact
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: actions/upload-pages-artifact@v5

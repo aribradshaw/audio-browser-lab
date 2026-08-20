@@ -56,7 +56,7 @@ Open `http://127.0.0.1:4173`. Choose an audio file, export its report, repeat in
 
 ## Release practice
 
-Public updates use the same Phoenix-calendar three-part cadence as the sister projects. Updates in the same month increment the third number. A new month advances the second number and resets the third to `1`. A new year advances the first number, sets the second number to the zero-based Arizona month, and resets the third to `1`. Every version must have a plain-English entry in `config/devlog-releases.json`; `npm run release:check` enforces the calendar sequence and keeps the package and public DevLog in sync. The newest entry appears first at `/devlog/`.
+Public updates use the same Phoenix-calendar three-part cadence as the sister projects. Updates in the same month increment the third number. A new month advances the second number and resets the third to `1`. A new year advances the first number, sets the second number to the zero-based Arizona month, and resets the third to `1`. Every push to production `main` runs the opt-in shared DevLog automation in `devlog.config.json`, records one release per source commit, synchronizes all workspace versions, and publishes the generated entry with the Pages build. Generated release commits are ignored to prevent loops. `npm run release:check` and the fail-closed automation check prevent production from shipping when the package and public DevLog drift. Set `enabled` to `false` in `devlog.config.json` to disable automatic iteration while retaining the normal validation. The newest entry appears first at `/devlog/`.
 
 ### CLI
 

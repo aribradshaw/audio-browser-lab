@@ -33,6 +33,8 @@
     "build:packages": "npm run build -w @audio-browser-lab/core --if-present && npm run build -w @audio-browser-lab/browser --if-present && npm run build -w @audio-browser-lab/howler --if-present && npm run build -w @audio-browser-lab/wavesurfer --if-present && npm run build -w @audio-browser-lab/cli --if-present && npm run build -w @audio-browser-lab/api --if-present && npm run build -w @audio-browser-lab/mcp --if-present",
     "check": "npm run release:check && npm run generate:sitemap && npm run build:packages && npm run check --workspaces --if-present && tsc -b --pretty false",
     "release:check": "node scripts/check-release.mjs",
+    "release:auto": "devlog-release prepare --production",
+    "release:auto:check": "devlog-release check --production",
     "test": "node --test scripts/monthly-version.test.mjs && vitest run --exclude scripts/monthly-version.test.mjs",
     "test:watch": "vitest",
     "preview": "vite preview",
@@ -41,7 +43,7 @@
     "prepare": "npm run build:packages"
   },
   "dependencies": {
-    "@aribradshaw/devlog": "1.0.3",
+    "@aribradshaw/devlog": "1.0.4",
     "react": "^19.2.8",
     "react-dom": "^19.2.8"
   },

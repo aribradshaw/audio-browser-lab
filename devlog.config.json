@@ -1,0 +1,32 @@
+{
+  "enabled": true,
+  "failClosed": true,
+  "productionBranches": [
+    "main"
+  ],
+  "ignoreCommitPrefixes": [
+    "chore(release):"
+  ],
+  "registryPath": "config/devlog-releases.json",
+  "manifestPaths": [
+    "package.json",
+    "package-lock.json",
+    "packages/api/package.json",
+    "packages/browser/package.json",
+    "packages/cli/package.json",
+    "packages/core/package.json",
+    "packages/howler/package.json",
+    "packages/mcp/package.json",
+    "packages/wavesurfer/package.json"
+  ],
+  "versionFilePaths": [
+    "packages/cli/src/library.ts",
+    "packages/mcp/src/index.ts"
+  ],
+  "timeZone": "America/Phoenix",
+  "baselineVersion": "1.0.1",
+  "author": {
+    "name": "Ari Bradshaw",
+    "githubLogin": "aribradshaw"
+  }
+}
