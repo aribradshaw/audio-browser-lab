@@ -123,7 +123,7 @@ The server exposes `inspect_audio_file`, `diagnose_audio_report`, `compare_brows
 
 The seven audio packages are independently built, typed, licensed, and ready for npm publication. They are not claimed as npm-hosted until the `@audio-browser-lab` scope is connected to a publisher account.
 
-The monorepo also pilots `@aribradshaw/devlog`, a project-neutral headless package for author metadata, GitHub commit links, feature policies, search, and pagination. Audio Browser Lab owns the package's first visual integration. It is intentionally not published yet while the API is proven here.
+The site uses [`@aribradshaw/devlog`](https://github.com/aribradshaw/devlog), a project-neutral headless package for author metadata, GitHub commit links, feature policies, search, and pagination. Audio Browser Lab is its first visual integration while retaining this project's own interface and release data.
 
 ## Questions covered
 
@@ -140,7 +140,7 @@ npm run build
 ## Documentation
 
 - [Architecture](docs/ARCHITECTURE.md)
-- [Reusable DevLog pilot](docs/DEVLOG-PILOT.md)
+- [Reusable DevLog architecture](docs/DEVLOG-PILOT.md)
 - [Integrations](docs/INTEGRATION.md)
 - [Howler case study](docs/HOWLER-CASE-STUDY.md)
 - [Diagnostic questions](docs/QUESTIONS.md)

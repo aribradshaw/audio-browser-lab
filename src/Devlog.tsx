@@ -60,7 +60,7 @@ export default function Devlog() {
         <aside className="release-card" aria-label="Current release">
           <span className="tiny-label">Current release</span>
           <strong>v{currentVersion}</strong>
-          <p>Every public update gets a three-part version and a readable release record.</p>
+          <p>Live public release record, linked to its source.</p>
           <span className="live-status"><i /> Live</span>
         </aside>
       </section>

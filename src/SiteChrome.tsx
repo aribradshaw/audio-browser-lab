@@ -32,12 +32,15 @@ function PageSkeleton({ page = 'lab' }: { page?: SitePage }) {
 }
 
 export function SiteHeader({ page = 'lab' }: { page?: SitePage }) {
+  const [menuOpen, setMenuOpen] = useState(false)
+
   return <header className="site-header">
     <a className="brand" href={base} aria-label="Audio Browser Lab home">
       <span className="pixel-mark" aria-hidden="true">ABL</span>
       <span>Audio Browser Lab</span>
     </a>
-    <nav className="site-nav" aria-label="Primary navigation">
+    <button className="site-menu-toggle" type="button" aria-expanded={menuOpen} aria-controls="primary-navigation" onClick={() => setMenuOpen((open) => !open)}>MENU</button>
+    <nav id="primary-navigation" className={`site-nav ${menuOpen ? 'open' : ''}`} aria-label="Primary navigation" onClick={() => setMenuOpen(false)}>
       <a className={page === 'lab' ? 'active' : ''} href={base}>Lab</a>
       <a href={`${base}#questions`}>Questions</a>
       <a className={page === 'docs' ? 'active' : ''} href={`${base}docs/`}>Docs</a>

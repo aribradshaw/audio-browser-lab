@@ -30,7 +30,7 @@
     "dev": "vite",
     "generate:sitemap": "node scripts/generate-sitemap.mjs",
     "build": "npm run generate:sitemap && npm run build:packages && tsc -b && vite build",
-    "build:packages": "npm run build -w @aribradshaw/devlog --if-present && npm run build -w @audio-browser-lab/core --if-present && npm run build -w @audio-browser-lab/browser --if-present && npm run build -w @audio-browser-lab/howler --if-present && npm run build -w @audio-browser-lab/wavesurfer --if-present && npm run build -w @audio-browser-lab/cli --if-present && npm run build -w @audio-browser-lab/api --if-present && npm run build -w @audio-browser-lab/mcp --if-present",
+    "build:packages": "npm run build -w @audio-browser-lab/core --if-present && npm run build -w @audio-browser-lab/browser --if-present && npm run build -w @audio-browser-lab/howler --if-present && npm run build -w @audio-browser-lab/wavesurfer --if-present && npm run build -w @audio-browser-lab/cli --if-present && npm run build -w @audio-browser-lab/api --if-present && npm run build -w @audio-browser-lab/mcp --if-present",
     "check": "npm run release:check && npm run generate:sitemap && npm run build:packages && npm run check --workspaces --if-present && tsc -b --pretty false",
     "release:check": "node scripts/check-release.mjs",
     "test": "node --test scripts/monthly-version.test.mjs && vitest run --exclude scripts/monthly-version.test.mjs",
@@ -40,7 +40,7 @@
     "prepare": "npm run build:packages"
   },
   "dependencies": {
-    "@aribradshaw/devlog": "*",
+    "@aribradshaw/devlog": "1.0.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8"
   },

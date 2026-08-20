@@ -1,10 +1,10 @@
-# Reusable DevLog pilot
+# Reusable DevLog architecture
 
 ## Decision
 
 A shared DevLog source of truth is worthwhile if it is headless. Projects should share release types, validation, GitHub source resolution, search, pagination, and version helpers. They should not share a fixed page component, stylesheet, data store, access policy, or deployment provider.
 
-Audio Browser Lab is the proving ground. No other project should adopt the package until this integration is approved and the package API is extracted into its own public repository.
+Audio Browser Lab was the proving ground. The approved API now lives in the public [`aribradshaw/devlog`](https://github.com/aribradshaw/devlog) repository and is published as [`@aribradshaw/devlog`](https://www.npmjs.com/package/@aribradshaw/devlog).
 
 ## Existing project needs
 
@@ -39,15 +39,12 @@ Each host project must continue to own:
 - Deployment-provider lifecycle collection.
 - Project-specific release prose and calls to action.
 
-## Extraction sequence
+## Adoption sequence
 
-1. Prove the headless package in Audio Browser Lab.
-2. Approve the API and visual result.
-3. Extract `@aribradshaw/devlog` into a dedicated public repository without changing consumers.
-4. Publish an initial npm version only after package names and ownership are confirmed.
-5. Migrate one lower-risk project, preferably 1976 or Brickstone Learning.
-6. Migrate Saguaro Signal and Campaign Baby independently.
-7. Treat Peter MD as the final adoption because its lifecycle, authentication, and privacy requirements are the richest.
+1. Keep the approved Audio Browser Lab integration on the published package.
+2. Migrate lower-risk projects through compatibility facades that preserve their own rendering.
+3. Migrate Saguaro Signal and Campaign Baby independently with behavior-parity tests.
+4. Treat Peter MD as the final adoption because its lifecycle, authentication, and privacy requirements are the richest.
 
 ## Pilot acceptance gates
 

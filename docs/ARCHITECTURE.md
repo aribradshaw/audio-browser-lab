@@ -18,8 +18,8 @@ The report SHA-256 protects cross-browser comparisons from the most common testi
 
 Both public pages render through `PageFrame` in `src/SiteChrome.tsx`. Keep new pages inside that shell so they inherit the loading skeleton, staggered top-level module entrance, reduced-motion behavior, and same-origin exit transition. New static HTML entries are discovered by `scripts/generate-sitemap.mjs` during `npm run build` and included in `public/sitemap.xml`.
 
-## Headless DevLog pilot
+## Headless DevLog package
 
-`@aribradshaw/devlog` in `packages/devlog` owns portable release types and behavior without owning a visual design. Its capability policy lets a host choose public or private defaults, then independently expose author, commit, source-subject, batched-commit, lifecycle, search, and pagination features.
+The external [`@aribradshaw/devlog`](https://github.com/aribradshaw/devlog) package owns portable release types and behavior without owning a visual design. Its capability policy lets a host choose public or private defaults, then independently expose author, commit, source-subject, batched-commit, lifecycle, search, and pagination features.
 
-Audio Browser Lab is the first consumer. Its DevLog keeps the local pixel interface while using the package to resolve GitHub profiles, avatars, and exact source commits. Current-release commits come from `GITHUB_SHA` during the Pages build, so the release can link to the commit that contains itself. The package remains inside this monorepo until the pilot is stable enough to extract into its own public repository and npm package.
+Audio Browser Lab is the first consumer. Its DevLog keeps the local pixel interface while using the package to resolve GitHub profiles, avatars, and exact source commits. Current-release commits come from `GITHUB_SHA` during the Pages build, so the release can link to the commit that contains itself.

@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { currentVersion } from './release-data'
 import { PageFrame } from './SiteChrome'
 
@@ -12,8 +13,13 @@ const packageCards = [
 ]
 
 function CodeBlock({ children, label }: { children: string, label: string }) {
+  const [copied, setCopied] = useState(false)
+  const copy = async () => {
+    try { await navigator.clipboard.writeText(children); setCopied(true); window.setTimeout(() => setCopied(false), 1600) } catch { setCopied(false) }
+  }
+
   return <div className="docs-code-block">
-    <span className="docs-code-label">{label}</span>
+    <div className="docs-code-header"><span className="docs-code-label">{label}</span><button type="button" className="docs-copy-button" onClick={() => void copy()}>{copied ? 'COPIED' : 'COPY'}</button></div>
     <pre><code>{children}</code></pre>
   </div>
 }
