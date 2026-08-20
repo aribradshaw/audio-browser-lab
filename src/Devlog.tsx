@@ -1,10 +1,52 @@
+import { createDevLogCapabilities, resolveDevLogSourceMeta } from '@aribradshaw/devlog'
 import { PageFrame } from './SiteChrome'
-import { currentVersion, releases } from './release-data'
+import { currentVersion, releases, type ReleaseEntry } from './release-data'
+import './devlog-source-meta.css'
 
 const repository = 'https://github.com/aribradshaw/audio-browser-lab'
+const capabilities = createDevLogCapabilities({
+  visibility: 'public',
+  author: true,
+  commit: true,
+  sourceSubject: false,
+  includedCommits: false,
+  lifecycle: false,
+})
 
-function commitUrl(commit: string) {
-  return commit === 'main' ? `${repository}/commits/main` : `${repository}/commit/${commit}`
+function SourceMeta({ release }: { release: ReleaseEntry }) {
+  const source = resolveDevLogSourceMeta(release, {
+    repositoryUrl: repository,
+    currentVersion,
+    buildCommit: __APP_COMMIT_SHA__,
+    capabilities,
+  })
+
+  if (!source.author && !source.commit) return null
+
+  const authorContents = source.author ? <>
+    <span className="devlog-avatar" aria-hidden="true">
+      <span>{source.author.initials}</span>
+      {source.author.avatarUrl ? <img src={source.author.avatarUrl} alt="" loading="lazy" /> : null}
+    </span>
+    <span>{source.author.name}</span>
+  </> : null
+
+  return <footer className="devlog-source-meta">
+    {source.author?.profileUrl
+      ? <a className="devlog-author" href={source.author.profileUrl} target="_blank" rel="noreferrer">{authorContents}</a>
+      : source.author ? <span className="devlog-author">{authorContents}</span> : null}
+    {source.commit ? <a
+      className="devlog-commit"
+      href={source.commit.url}
+      target="_blank"
+      rel="noreferrer"
+      aria-label={`Open commit ${source.commit.shortSha} on GitHub`}
+    >
+      <span aria-hidden="true">◇</span>
+      {source.commit.shortSha}
+      <span aria-hidden="true">↗</span>
+    </a> : null}
+  </footer>
 }
 
 export default function Devlog() {
@@ -23,13 +65,7 @@ export default function Devlog() {
         </aside>
       </section>
 
-      <section className="release-history" aria-labelledby="release-history-title">
-        <div className="section-title release-heading">
-          <div>
-            <span className="tiny-label">Release history</span>
-            <h2 id="release-history-title">WHAT SHIPPED</h2>
-          </div>
-        </div>
+      <section className="release-history" aria-label="Releases">
         <ol className="release-list">
           {releases.map((release, index) => <li className="release-entry" key={release.version}>
             <div className="release-rail">
@@ -42,10 +78,10 @@ export default function Devlog() {
                   <span className="version-chip">v{release.version}{index === 0 ? ' · CURRENT' : ''}</span>
                   <h3>{release.title}</h3>
                 </div>
-                <a className="text-link" href={commitUrl(release.commit)}>View source ↗</a>
               </div>
               <p className="release-summary">{release.summary}</p>
               <ul>{release.notes.map((note) => <li key={note}>{note}</li>)}</ul>
+              <SourceMeta release={release} />
             </article>
           </li>)}
         </ol>

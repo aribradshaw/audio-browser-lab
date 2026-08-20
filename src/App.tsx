@@ -37,6 +37,7 @@ function App() {
   const [remoteUrl, setRemoteUrl] = useState('')
   const [network, setNetwork] = useState<NetworkEvidence | null>(null)
   const [comparison, setComparison] = useState<ReportComparison | null>(null)
+  const [openQuestionIds, setOpenQuestionIds] = useState<string[]>([])
   const codecs = useMemo(getCodecSignals, [])
 
   const run = async (next: File) => {
@@ -59,6 +60,7 @@ function App() {
     const files = [...(event.target.files || [])]; if (files.length !== 2) { setStatus('Select exactly two Audio Browser Lab JSON reports.'); return }
     try { setComparison(compareReports(JSON.parse(await files[0].text()), JSON.parse(await files[1].text()))) } catch { setStatus('One of those files is not a valid report.') }
   }
+  const toggleQuestion = (id: string) => setOpenQuestionIds((current) => current.includes(id) ? current.filter((item) => item !== id) : [...current, id])
   const issues = report?.findings?.filter((finding) => finding.severity !== 'pass') || []
 
   return <PageFrame>
@@ -109,7 +111,18 @@ function App() {
     <section className="dark-section" id="questions">
       <div className="section-shell compact">
         <div className="section-title"><div><span className="tiny-label lime">04 / QUESTION DECK</span><h2>EIGHT BUGS THIS LAB CAN ANSWER</h2></div></div>
-        <div className="question-grid">{questionCatalog.map((question, index) => <details key={question.id}><summary><b>{String(index + 1).padStart(2, '0')}</b>{question.title}</summary><p>{question.shortAnswer}</p><small>NEEDS: {question.evidenceNeeded.join(' · ')}</small></details>)}</div>
+        <div className="question-grid">{questionCatalog.map((question, index) => {
+          const isOpen = openQuestionIds.includes(question.id)
+          const answerId = `question-answer-${question.id}`
+          return <article className={`question-card ${isOpen ? 'open' : ''}`} key={question.id}>
+            <button type="button" aria-expanded={isOpen} aria-controls={answerId} onClick={() => toggleQuestion(question.id)}>
+              <b>{String(index + 1).padStart(2, '0')}</b><span>{question.title}</span><i aria-hidden="true">{isOpen ? '−' : '+'}</i>
+            </button>
+            <div className="question-answer" id={answerId} aria-hidden={!isOpen}>
+              <div className="question-answer-inner"><p>{question.shortAnswer}</p><small>NEEDS: {question.evidenceNeeded.join(' · ')}</small></div>
+            </div>
+          </article>
+        })}</div>
       </div>
     </section>
 

@@ -2,13 +2,17 @@ import { useEffect, useState, type ReactNode } from 'react'
 import { currentVersion } from './release-data'
 
 const base = import.meta.env.BASE_URL
-type SitePage = 'lab' | 'devlog'
+type SitePage = 'lab' | 'devlog' | 'docs'
 
 function SkeletonBar({ className = '' }: { className?: string }) {
   return <span className={`skeleton-bar ${className}`} aria-hidden="true" />
 }
 
 function PageSkeleton({ page = 'lab' }: { page?: SitePage }) {
+  if (page === 'docs') return <main id="main-content" className="page-skeleton docs-page" aria-busy="true" aria-label="Loading page">
+    <section className="skeleton-hero"><div className="skeleton-copy"><SkeletonBar className="skeleton-kicker" /><SkeletonBar className="skeleton-title" /><SkeletonBar className="skeleton-title skeleton-title-short" /><SkeletonBar className="skeleton-lede" /></div><div className="skeleton-card"><SkeletonBar className="skeleton-card-label" /><SkeletonBar className="skeleton-card-title" /><SkeletonBar className="skeleton-card-copy" /><SkeletonBar className="skeleton-card-copy short" /></div></section>
+    <section className="skeleton-section"><SkeletonBar className="skeleton-kicker" /><SkeletonBar className="skeleton-heading" /><div className="skeleton-grid"><SkeletonBar /><SkeletonBar /><SkeletonBar /></div></section>
+  </main>
   if (page === 'devlog') return <main id="main-content" className="page-skeleton devlog-page" aria-busy="true" aria-label="Loading page">
     <section className="skeleton-hero">
       <div className="skeleton-copy"><SkeletonBar className="skeleton-kicker" /><SkeletonBar className="skeleton-title" /><SkeletonBar className="skeleton-title skeleton-title-short" /><SkeletonBar className="skeleton-lede" /></div>
@@ -27,7 +31,7 @@ function PageSkeleton({ page = 'lab' }: { page?: SitePage }) {
   </main>
 }
 
-export function SiteHeader({ page = 'lab' }: { page?: 'lab' | 'devlog' }) {
+export function SiteHeader({ page = 'lab' }: { page?: SitePage }) {
   return <header className="site-header">
     <a className="brand" href={base} aria-label="Audio Browser Lab home">
       <span className="pixel-mark" aria-hidden="true">ABL</span>
@@ -36,6 +40,7 @@ export function SiteHeader({ page = 'lab' }: { page?: 'lab' | 'devlog' }) {
     <nav className="site-nav" aria-label="Primary navigation">
       <a className={page === 'lab' ? 'active' : ''} href={base}>Lab</a>
       <a href={`${base}#questions`}>Questions</a>
+      <a className={page === 'docs' ? 'active' : ''} href={`${base}docs/`}>Docs</a>
       <a className={page === 'devlog' ? 'active' : ''} href={`${base}devlog/`}>DevLog</a>
       <a href="https://github.com/aribradshaw/audio-browser-lab">GitHub</a>
     </nav>
@@ -58,6 +63,7 @@ export function SiteFooter() {
         <div className="footer-link-group">
           <span className="footer-label">Explore</span>
           <a href={base}>Open lab</a>
+          <a href={`${base}docs/`}>Documentation</a>
           <a href={`${base}devlog/`}>Public DevLog</a>
         </div>
         <div className="footer-link-group">

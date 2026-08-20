@@ -1,5 +1,21 @@
 [
   {
+    "version": "1.0.6",
+    "date": "2026-08-19",
+    "title": "Make every release attributable",
+    "summary": "Added portable author and source metadata through the first integration of a reusable headless DevLog package.",
+    "notes": [
+      "Added the release author, GitHub profile image, and linked short commit to every public entry.",
+      "Built a project-neutral DevLog package with public and private capability policies.",
+      "Kept Audio Browser Lab's pixel interface separate from the shared release logic."
+    ],
+    "commit": null,
+    "author": {
+      "name": "Ari Bradshaw",
+      "githubLogin": "aribradshaw"
+    }
+  },
+  {
     "version": "1.0.5",
     "date": "2026-08-19",
     "title": "Unify the working surface",
@@ -11,7 +27,11 @@
       "Removed redundant introductory copy from the DevLog hero.",
       "Kept the public release record aligned with the shared Phoenix calendar cadence."
     ],
-    "commit": "main"
+    "commit": "e1f9f073b1137363b036c94421cd2b8386a19a95",
+    "author": {
+      "name": "Ari Bradshaw",
+      "githubLogin": "aribradshaw"
+    }
   },
   {
     "version": "1.0.4",
@@ -23,7 +43,11 @@
       "Rebuilt the footer around clearer project, privacy, source, DevLog, and sitemap paths.",
       "Generated a public sitemap during every development and production build."
     ],
-    "commit": "main"
+    "commit": "544870a06c29d481c789a4b5aa99d86765b3526f",
+    "author": {
+      "name": "Ari Bradshaw",
+      "githubLogin": "aribradshaw"
+    }
   },
   {
     "version": "1.0.3",
@@ -34,7 +58,11 @@
       "Moved the public DevLog link into the release and privacy status cluster.",
       "Replaced shorthand privacy claims with clearer language about local files and usage tracking."
     ],
-    "commit": "main"
+    "commit": "23c3dfa89e98045d1c4d4fff2ce8ff9d9fe5b8e4",
+    "author": {
+      "name": "Ari Bradshaw",
+      "githubLogin": "aribradshaw"
+    }
   },
   {
     "version": "1.0.2",
@@ -46,7 +74,11 @@
       "Added this public DevLog and connected every page through a shared footer.",
       "Aligned package metadata and public copyright with the MIT-licensed Flygon LC project."
     ],
-    "commit": "main"
+    "commit": "ae8d86a622d93f9bfb97b03a79897a20fbf39a5a",
+    "author": {
+      "name": "Ari Bradshaw",
+      "githubLogin": "aribradshaw"
+    }
   },
   {
     "version": "1.0.1",
@@ -58,6 +90,10 @@
       "Added browser, Howler, WaveSurfer, CLI, HTTP API, and MCP integration surfaces.",
       "Documented the cross-browser Howler seek problem and the evidence needed to isolate it."
     ],
-    "commit": "a7a6aca32b99f669bba2c1e24f20fdea06736b40"
+    "commit": "a7a6aca32b99f669bba2c1e24f20fdea06736b40",
+    "author": {
+      "name": "Ari Bradshaw",
+      "githubLogin": "aribradshaw"
+    }
   }
 ]

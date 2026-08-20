@@ -7,7 +7,7 @@ const projectRoot = path.resolve(scriptDir, '..')
 const publicDir = path.join(projectRoot, 'public')
 const siteUrl = (process.env.SITE_URL || 'https://aribradshaw.github.io/audio-browser-lab').replace(/\/+$/, '')
 
-const excludedDirectories = new Set(['.git', 'dist', 'node_modules', 'public', 'packages', 'docs', 'test-fixtures'])
+const excludedDirectories = new Set(['.git', 'dist', 'node_modules', 'public', 'packages', 'test-fixtures'])
 function collectHtmlEntries(directory, relativeDirectory = '') {
   const entries = []
   for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {

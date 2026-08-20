@@ -6,6 +6,8 @@ Browser-audio forensics without guesswork. Audio Browser Lab inspects the asset,
 
 **[Read the public DevLog](https://aribradshaw.github.io/audio-browser-lab/devlog/)**
 
+**[Read the documentation](https://aribradshaw.github.io/audio-browser-lab/docs/)**
+
 It is a Flygon LC project with a local-first rule: audio files selected in the web lab are analyzed in your browser and are not uploaded. The CLI and MCP server read local files directly. No account, usage tracking, or hosted backend is required.
 
 ## The Howler question
@@ -119,7 +121,9 @@ After the Git dependency install above:
 
 The server exposes `inspect_audio_file`, `diagnose_audio_report`, `compare_browser_reports`, `inspect_remote_audio`, `list_audio_questions`, and `generate_repair_plan`.
 
-The seven scoped packages are independently built, typed, licensed, and ready for npm publication. They are not claimed as npm-hosted until the `@audio-browser-lab` scope is connected to a publisher account.
+The seven audio packages are independently built, typed, licensed, and ready for npm publication. They are not claimed as npm-hosted until the `@audio-browser-lab` scope is connected to a publisher account.
+
+The monorepo also pilots `@aribradshaw/devlog`, a project-neutral headless package for author metadata, GitHub commit links, feature policies, search, and pagination. Audio Browser Lab owns the package's first visual integration. It is intentionally not published yet while the API is proven here.
 
 ## Questions covered
 
@@ -136,6 +140,7 @@ npm run build
 ## Documentation
 
 - [Architecture](docs/ARCHITECTURE.md)
+- [Reusable DevLog pilot](docs/DEVLOG-PILOT.md)
 - [Integrations](docs/INTEGRATION.md)
 - [Howler case study](docs/HOWLER-CASE-STUDY.md)
 - [Diagnostic questions](docs/QUESTIONS.md)
