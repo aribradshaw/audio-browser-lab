@@ -1,6 +1,6 @@
 {
   "name": "@audio-browser-lab/core",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "Browser-neutral audio inspection, diagnosis, and report comparison.",
   "type": "module",
   "sideEffects": false,

@@ -1,6 +1,6 @@
 {
   "name": "@audio-browser-lab/browser",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "Browser audio measurement SDK for Audio Browser Lab.",
   "type": "module",
   "sideEffects": false,
@@ -19,7 +19,7 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@audio-browser-lab/core": "1.0.8"
+    "@audio-browser-lab/core": "1.0.9"
   },
   "keywords": ["web-audio", "htmlmediaelement", "browser", "audio", "diagnostics"],
   "license": "MIT",

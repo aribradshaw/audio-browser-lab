@@ -1,9 +1,9 @@
 {
   "name": "@audio-browser-lab/cli",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "Command-line audio structure inspection and browser report diagnostics.",
   "type": "module",
-  "bin": { "abl": "./dist/index.js" },
+  "bin": { "abl": "dist/index.js" },
   "main": "./dist/library.js",
   "types": "./dist/library.d.ts",
   "exports": {
@@ -16,7 +16,7 @@
     "check": "tsc --noEmit",
     "test": "vitest run"
   },
-  "dependencies": { "@audio-browser-lab/core": "1.0.8" },
+  "dependencies": { "@audio-browser-lab/core": "1.0.9" },
   "keywords": ["audio", "mp3", "cli", "browser-audio", "debugging", "diagnostics"],
   "license": "MIT",
   "repository": { "type": "git", "url": "git+https://github.com/aribradshaw/audio-browser-lab.git", "directory": "packages/cli" },

@@ -1,17 +1,17 @@
 {
   "name": "@audio-browser-lab/mcp",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "MCP server that gives coding agents evidence-based browser audio diagnostics.",
   "type": "module",
-  "bin": { "audio-browser-lab-mcp": "./dist/index.js" },
+  "bin": { "audio-browser-lab-mcp": "dist/index.js" },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": { ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js" } },
   "files": ["dist", "README.md"],
   "scripts": { "build": "tsup", "check": "tsc --noEmit", "test": "vitest run" },
   "dependencies": {
-    "@audio-browser-lab/cli": "1.0.8",
-    "@audio-browser-lab/core": "1.0.8",
+    "@audio-browser-lab/cli": "1.0.9",
+    "@audio-browser-lab/core": "1.0.9",
     "@modelcontextprotocol/server": "^2.0.0",
     "zod": "^4.4.3"
   },

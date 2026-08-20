@@ -1,6 +1,6 @@
 {
   "name": "@audio-browser-lab/wavesurfer",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "wavesurfer.js diagnostics adapter for Audio Browser Lab.",
   "type": "module",
   "sideEffects": false,
@@ -13,7 +13,7 @@
     "check": "tsc --noEmit",
     "test": "vitest run"
   },
-  "dependencies": { "@audio-browser-lab/core": "1.0.8" },
+  "dependencies": { "@audio-browser-lab/core": "1.0.9" },
   "peerDependencies": { "wavesurfer.js": ">=7.0.0" },
   "peerDependenciesMeta": { "wavesurfer.js": { "optional": true } },
   "keywords": ["wavesurfer", "audio", "browser-audio", "debugging", "diagnostics", "waveform"],

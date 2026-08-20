@@ -1,5 +1,5 @@
 import { execFileSync } from 'node:child_process'
-import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
+import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import path from 'node:path'
 
@@ -21,6 +21,11 @@ try {
     for (const [dependency, version] of Object.entries(manifest.dependencies || {})) {
       if (dependency.startsWith('@audio-browser-lab/') && version !== rootPackage.version) {
         throw new Error(`${manifest.name} must pin ${dependency} to ${rootPackage.version}.`)
+      }
+    }
+    for (const [binary, target] of Object.entries(manifest.bin || {})) {
+      if (typeof target !== 'string' || target.startsWith('.')) {
+        throw new Error(`${manifest.name} has an invalid ${binary} binary path: ${target}`)
       }
     }
     const output = execFileSync(process.execPath, [npmCli, 'pack', packageDirectory, '--json', '--pack-destination', workspace], {
@@ -51,6 +56,10 @@ try {
     "for (const value of [inspectMp3, analyzeBrowserFile, observeHowl, observeWaveSurfer, createAudioBrowserLabApi, createAudioBrowserLabMcpServer]) if (typeof value !== 'function') process.exit(1)",
   ].join('\n'))
   execFileSync(process.execPath, ['verify.mjs'], { cwd: workspace, stdio: 'inherit' })
+  for (const binary of ['abl', 'audio-browser-lab-mcp']) {
+    const shim = path.join(workspace, 'node_modules', '.bin', `${binary}${process.platform === 'win32' ? '.cmd' : ''}`)
+    if (!existsSync(shim)) throw new Error(`Packed install did not expose the ${binary} executable.`)
+  }
   const cliVersion = execFileSync(process.execPath, [
     path.join(workspace, 'node_modules', '@audio-browser-lab', 'cli', 'dist', 'index.js'), '--version',
   ], { cwd: workspace, encoding: 'utf8' }).trim()

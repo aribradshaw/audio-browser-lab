@@ -1,5 +1,21 @@
 [
   {
+    "version": "1.0.9",
+    "date": "2026-08-19",
+    "title": "Make every install path executable",
+    "summary": "Hardened the first npm release after registry validation caught invalid executable metadata in the CLI and MCP packages.",
+    "notes": [
+      "Corrected the published binary paths so npx installs expose both abl and audio-browser-lab-mcp.",
+      "Expanded packed-consumer verification to inspect installed manifests and require generated executable shims.",
+      "Kept all seven packages on the same Phoenix-calendar release for predictable upgrades."
+    ],
+    "commit": null,
+    "author": {
+      "name": "Ari Bradshaw",
+      "githubLogin": "aribradshaw"
+    }
+  },
+  {
     "version": "1.0.8",
     "date": "2026-08-19",
     "title": "Put the lab on every workbench",
