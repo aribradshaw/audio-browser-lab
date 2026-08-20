@@ -68,14 +68,14 @@ export default function Docs() {
           <section className="docs-section" id="javascript">
             <div className="docs-section-heading"><span className="tiny-label">02 / EMBED IT</span><h2>ADD IT TO A JAVASCRIPT APP</h2><p>Use the same report shape in a test harness, debugging panel, or internal support tool.</p></div>
             <div className="docs-package-grid">{packageCards.map(([name, description]) => <article className="docs-package-card" key={name}><code>{name}</code><p>{description}</p></article>)}</div>
+            <CodeBlock label="Install" children={`npm install @audio-browser-lab/browser`} />
             <CodeBlock label="Browser analysis" children={`import { analyzeBrowserFile } from '@audio-browser-lab/browser'\n\nconst report = await analyzeBrowserFile(file, {\n  seekTargets: [1, 30, 120],\n})`} />
-            <p className="docs-note"><strong>Package status:</strong> the project is source-first while the npm publishing scope is being finalized. Clone the repository and build the workspaces locally before using these package imports.</p>
+            <p className="docs-note"><strong>Package status:</strong> all seven packages are published under the <a href="https://www.npmjs.com/org/audio-browser-lab">@audio-browser-lab npm organization</a>. Install only the packages your project needs.</p>
           </section>
 
           <section className="docs-section" id="terminal">
             <div className="docs-section-heading"><span className="tiny-label">03 / AUTOMATE IT</span><h2>INSPECT FILES IN THE CLI OR CI</h2><p>Use the CLI when the file is local, repeatable, and should become part of a fixture or release check.</p></div>
-            <CodeBlock label="Clone and build" children={`git clone ${repository}.git\ncd audio-browser-lab\nnpm install\nnpm run build:packages`} />
-            <CodeBlock label="Inspect and compare" children={`npm run abl -- inspect ./problem.mp3 --json > report.json\nnpm run abl -- questions\nnpm run abl -- compare chrome.json safari.json\nnpm run abl -- inspect-url https://example.com/problem.mp3`} />
+            <CodeBlock label="Inspect and compare" children={`npx -y @audio-browser-lab/cli inspect ./problem.mp3 --json > report.json\nnpx -y @audio-browser-lab/cli questions\nnpx -y @audio-browser-lab/cli compare chrome.json safari.json\nnpx -y @audio-browser-lab/cli inspect-url https://example.com/problem.mp3`} />
             <div className="docs-warning"><span className="tiny-label">Important boundary</span><p>Use browser reports for decoder behavior. The CLI can inspect file structure and generate diagnoses, but it cannot reproduce a browser's media timeline by itself.</p></div>
           </section>
 
@@ -83,7 +83,7 @@ export default function Docs() {
             <div className="docs-section-heading"><span className="tiny-label">04 / CONNECT IT</span><h2>USE THE API OR MCP SERVER</h2><p>Choose a service boundary when another process needs the same evidence engine.</p></div>
             <div className="docs-service-grid">
               <article className="docs-service-card"><span className="tiny-label">LOCAL HTTP API</span><h3>Connect another stack</h3><p>Run the Node server yourself and call health, question, inspect, diagnose, and compare routes from a trusted local application.</p><CodeBlock label="Start the server" children={`import { createAudioBrowserLabApi } from '@audio-browser-lab/api'\n\ncreateAudioBrowserLabApi({\n  corsOrigin: 'http://localhost:3000',\n}).listen(8787)`} /><small>Keep the CORS origin narrow and bind only where your application can reach it.</small></article>
-              <article className="docs-service-card"><span className="tiny-label">MCP SERVER</span><h3>Give coding agents evidence tools</h3><p>Expose local inspection, report diagnosis, comparison, remote probing, question discovery, and non-destructive repair plans through stdio.</p><CodeBlock label="MCP client config" children={`{\n  "mcpServers": {\n    "audio-browser-lab": {\n      "command": "npx",\n      "args": ["audio-browser-lab-mcp"]\n    }\n  }\n}`} /><small>File access follows the permissions of the MCP host process.</small></article>
+              <article className="docs-service-card"><span className="tiny-label">MCP SERVER</span><h3>Give coding agents evidence tools</h3><p>Expose local inspection, report diagnosis, comparison, remote probing, question discovery, and non-destructive repair plans through stdio.</p><CodeBlock label="MCP client config" children={`{\n  "mcpServers": {\n    "audio-browser-lab": {\n      "command": "npx",\n      "args": ["-y", "@audio-browser-lab/mcp"]\n    }\n  }\n}`} /><small>File access follows the permissions of the MCP host process.</small></article>
             </div>
           </section>
 
