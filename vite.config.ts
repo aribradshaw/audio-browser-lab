@@ -13,6 +13,8 @@ export default defineConfig({
         main: new URL('index.html', import.meta.url).pathname,
         devlog: new URL('devlog/index.html', import.meta.url).pathname,
         docs: new URL('docs/index.html', import.meta.url).pathname,
+        howlerExample: new URL('examples/howler/index.html', import.meta.url).pathname,
+        wavesurferExample: new URL('examples/wavesurfer/index.html', import.meta.url).pathname,
       },
     },
   },

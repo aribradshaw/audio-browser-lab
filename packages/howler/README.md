@@ -19,3 +19,5 @@ observation.stop()
 ```
 
 Use the adapter alongside the [web lab](https://aribradshaw.github.io/audio-browser-lab/) to separate asset, browser, delivery, and Howler behavior.
+
+For a complete local-only flow, run the [Howler example](https://aribradshaw.github.io/audio-browser-lab/examples/howler/) or copy its [framework-neutral source](https://github.com/aribradshaw/audio-browser-lab/tree/main/examples/howler). It attaches the observer before loading and merges the snapshot into an `AudioBrowserReport`.

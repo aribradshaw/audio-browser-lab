@@ -70,6 +70,11 @@ export default function Docs() {
             <div className="docs-package-grid">{packageCards.map(([name, description]) => <article className="docs-package-card" key={name}><code>{name}</code><p>{description}</p></article>)}</div>
             <CodeBlock label="Install" children={`npm install @audio-browser-lab/browser`} />
             <CodeBlock label="Browser analysis" children={`import { analyzeBrowserFile } from '@audio-browser-lab/browser'\n\nconst report = await analyzeBrowserFile(file, {\n  seekTargets: [1, 30, 120],\n})`} />
+            <div className="docs-project-links">
+              <a href={`${base}examples/howler/`}><strong>Runnable Howler example</strong><span>Observe a real Howl, seek the local fixture, and export merged evidence.</span></a>
+              <a href={`${base}examples/wavesurfer/`}><strong>Runnable WaveSurfer example</strong><span>Compare the rendered waveform timeline with the browser report.</span></a>
+              <a href={`${repository}/tree/main/test-fixtures`}><strong>CC0 fixture library</strong><span>Reuse exact bytes with recorded hashes, provenance, metadata, and expected behavior.</span></a>
+            </div>
             <p className="docs-note"><strong>Package status:</strong> all seven packages are published under the <a href="https://www.npmjs.com/org/audio-browser-lab">@audio-browser-lab npm organization</a>. Install only the packages your project needs.</p>
           </section>
 

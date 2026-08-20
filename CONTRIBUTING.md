@@ -27,3 +27,18 @@ npm run pack:check
 ```
 
 Add a deterministic test for parser or diagnosis changes. Do not commit copyrighted audio without clear redistribution permission.
+
+## Audio fixtures
+
+Fixture contributions must be small, deterministic, and legally redistributable. Prefer generated signals over third-party recordings.
+
+For every new file:
+
+1. Add its source, redistribution license, SHA-256, byte size, format metadata, bug class, expected behavior, and regeneration command to `test-fixtures/manifest.json`.
+2. Add a short human-readable entry to `test-fixtures/README.md`.
+3. Keep the fixture covered by `packages/core/test/fixtures.test.ts` so CI verifies its bytes and required metadata.
+4. Run the full validation sequence above, including the browser examples when the fixture changes integration behavior:
+
+```sh
+npm run test:browser
+```

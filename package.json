@@ -29,13 +29,14 @@
     "predev": "npm run generate:sitemap && npm run build:packages",
     "dev": "vite",
     "generate:sitemap": "node scripts/generate-sitemap.mjs",
-    "build": "npm run generate:sitemap && npm run build:packages && tsc -b && vite build",
+    "build": "npm run generate:sitemap && npm run build:packages && tsc -b && vite build && node scripts/copy-fixtures.mjs",
     "build:packages": "npm run build -w @audio-browser-lab/core --if-present && npm run build -w @audio-browser-lab/browser --if-present && npm run build -w @audio-browser-lab/howler --if-present && npm run build -w @audio-browser-lab/wavesurfer --if-present && npm run build -w @audio-browser-lab/cli --if-present && npm run build -w @audio-browser-lab/api --if-present && npm run build -w @audio-browser-lab/mcp --if-present",
     "check": "npm run release:check && npm run generate:sitemap && npm run build:packages && npm run check --workspaces --if-present && tsc -b --pretty false",
     "release:check": "node scripts/check-release.mjs",
     "release:auto": "devlog-release prepare --production",
     "release:auto:check": "devlog-release check --production",
-    "test": "node --test scripts/monthly-version.test.mjs && vitest run --exclude scripts/monthly-version.test.mjs",
+    "test": "node --test scripts/monthly-version.test.mjs && vitest run --exclude scripts/monthly-version.test.mjs --exclude tests/browser/**",
+    "test:browser": "playwright test",
     "test:watch": "vitest",
     "preview": "vite preview",
     "abl": "node packages/cli/dist/index.js",
@@ -48,15 +49,19 @@
     "react-dom": "^19.2.8"
   },
   "devDependencies": {
+    "@playwright/test": "^1.62.1",
+    "@types/howler": "^2.2.12",
     "@modelcontextprotocol/client": "^2.0.0",
     "@types/node": "^24.10.1",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.4",
     "@vitejs/plugin-react": "^6.0.5",
     "tsup": "^8.5.1",
+    "howler": "^2.2.4",
     "typescript": "^5.9.3",
     "vite": "^8.2.1",
-    "vitest": "^4.1.11"
+    "vitest": "^4.1.11",
+    "wavesurfer.js": "^7.12.11"
   },
   "overrides": {
     "esbuild": "^0.28.1"

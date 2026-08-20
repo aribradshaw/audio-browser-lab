@@ -15,3 +15,5 @@ observation.stop()
 ```
 
 Pair the adapter with repeated native seek probes from [Audio Browser Lab](https://aribradshaw.github.io/audio-browser-lab/) before assigning a timeline bug to the library layer.
+
+For a complete local-only flow, run the [WaveSurfer example](https://aribradshaw.github.io/audio-browser-lab/examples/wavesurfer/) or copy its [framework-neutral source](https://github.com/aribradshaw/audio-browser-lab/tree/main/examples/wavesurfer). It observes the instance before loading and merges the snapshot into an `AudioBrowserReport`.

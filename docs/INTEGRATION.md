@@ -8,9 +8,17 @@ Call `analyzeBrowserFile(file)` from a user action. Full Web Audio decoding expa
 
 Create the observer immediately after the `Howl`. Include `Howler.usingWebAudio` as the backend and merge `observer.snapshot()` into the browser report's `integration` field before running `diagnoseReport`.
 
+Run the [framework-neutral Howler example](https://aribradshaw.github.io/audio-browser-lab/examples/howler/) or copy its [source](../examples/howler). It attaches the observer before `load()`, uses a CC0 local fixture, and exports the merged report.
+
 ## WaveSurfer
 
 Create `observeWaveSurfer(instance)` after initialization. Its snapshot records duration, position, scroll, width, and lifecycle events. Comparing that duration to the browser report identifies a waveform-versus-player timeline mismatch.
+
+Run the [framework-neutral WaveSurfer example](https://aribradshaw.github.io/audio-browser-lab/examples/wavesurfer/) or copy its [source](../examples/wavesurfer). It observes the instance before `load()`, renders the waveform locally, and exports the merged report.
+
+## Fixture library
+
+Use the CC0 files in [`test-fixtures`](../test-fixtures) when a report or upstream bug needs identical, redistributable bytes. The manifest records each file's source, license, SHA-256, format metadata, expected behavior, and bug class. The production build serves the same files at `https://aribradshaw.github.io/audio-browser-lab/test-fixtures/`.
 
 ## CLI and CI
 

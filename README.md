@@ -13,6 +13,8 @@ Browser-audio forensics without guesswork. Audio Browser Lab inspects the asset,
 
 **[Read the documentation](https://aribradshaw.github.io/audio-browser-lab/docs/)**
 
+**[Run the Howler example](https://aribradshaw.github.io/audio-browser-lab/examples/howler/)** · **[Run the WaveSurfer example](https://aribradshaw.github.io/audio-browser-lab/examples/wavesurfer/)**
+
 It is a Flygon LC project with a local-first rule: audio files selected in the web lab are analyzed in your browser and are not uploaded. The CLI and MCP server read local files directly. No account, usage tracking, or hosted backend is required.
 
 ## The Howler question
@@ -100,6 +102,19 @@ const observation = observeHowl(howl, {
 const integrationEvidence = observation.snapshot()
 ```
 
+### Runnable player integrations
+
+The framework-neutral examples use the repository's CC0 fixture bytes, attach each observer before loading, and export a complete report with backend, duration, position, and lifecycle events:
+
+- [Howler example](https://aribradshaw.github.io/audio-browser-lab/examples/howler/) and [source](examples/howler)
+- [WaveSurfer example](https://aribradshaw.github.io/audio-browser-lab/examples/wavesurfer/) and [source](examples/wavesurfer)
+
+Both pages are local-only and contain no uploads or analytics. Their focused Chromium assertions run in CI.
+
+### Redistributable fixtures
+
+[`test-fixtures/`](test-fixtures) contains the CC0 browser-audio fixture library. Its machine-readable manifest records provenance, SHA-256, byte size, format metadata, expected behavior, and bug class for every file. Published builds serve the identical bytes from [`/test-fixtures/`](https://aribradshaw.github.io/audio-browser-lab/test-fixtures/manifest.json).
+
 ### Local HTTP API
 
 ```ts
@@ -141,6 +156,7 @@ The engine currently answers eight evidence paths, including the Howler mismatch
 npm run check
 npm test
 npm run build
+npm run test:browser
 npm run pack:check
 ```
 
@@ -155,6 +171,7 @@ If Audio Browser Lab saves you a cross-browser debugging session, star the repos
 - [Architecture](docs/ARCHITECTURE.md)
 - [Reusable DevLog architecture](docs/DEVLOG-PILOT.md)
 - [Integrations](docs/INTEGRATION.md)
+- [Fixture library](test-fixtures/README.md)
 - [Howler case study](docs/HOWLER-CASE-STUDY.md)
 - [GitHub issue opportunities](docs/GITHUB-ISSUE-OPPORTUNITIES.md)
 - [Diagnostic questions](docs/QUESTIONS.md)

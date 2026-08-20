@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#324b34" />
+    <meta name="description" content="Runnable local-only Howler integration for exporting Audio Browser Lab evidence." />
+    <link rel="canonical" href="https://aribradshaw.github.io/audio-browser-lab/examples/howler/" />
+    <link rel="icon" type="image/svg+xml" href="../../favicon.svg" />
+    <title>Howler integration example | Audio Browser Lab</title>
+  </head>
+  <body>
+    <main class="example-shell">
+      <nav class="example-nav" aria-label="Example navigation">
+        <a class="brand" href="../../">A FLYGON LC PROJECT</a>
+        <div class="example-nav-links"><a href="../../docs/">Docs</a><a href="../wavesurfer/">WaveSurfer example</a></div>
+      </nav>
+      <section class="example-hero">
+        <div><p class="eyebrow">Runnable integration / Howler</p><h1>OBSERVE THE PLAYER. EXPORT THE EVIDENCE.</h1><p class="lede">This framework-neutral example loads a generated local fixture, attaches the Howler observer before loading, and merges its live snapshot into a portable Audio Browser Lab report.</p></div>
+        <aside class="privacy-card"><strong>Local and inspectable</strong><p>The fixture ships with this repository. Nothing is uploaded, and this page contains no analytics.</p></aside>
+      </section>
+      <section class="workspace" aria-label="Howler evidence workspace">
+        <article class="panel">
+          <div class="status-row"><div><p class="panel-label">Player status</p><span id="example-status" class="status" data-state="loading" role="status" aria-live="polite">Loading fixture</span></div><code class="fixture-name">vbr-indexed.mp3</code></div>
+          <div class="player-surface"><span>HOWLER / GENERATED 440 HZ FIXTURE</span></div>
+          <div class="metric-grid" aria-label="Player measurements"><div class="metric"><span>Backend</span><strong id="metric-backend">pending</strong></div><div class="metric"><span>Duration</span><strong id="metric-duration">0.00 s</strong></div><div class="metric"><span>Position</span><strong id="metric-position">0.00 s</strong></div></div>
+          <div class="controls"><button id="play-button" class="primary" type="button" disabled>Play</button><button id="pause-button" type="button" disabled>Pause</button><button id="seek-button" type="button" disabled>Seek to 50%</button><button id="export-button" type="button" disabled>Export report</button></div>
+          <a class="source-link" href="https://github.com/aribradshaw/audio-browser-lab/tree/main/examples/howler">View copy-pasteable source</a>
+        </article>
+        <article class="panel"><p class="panel-label">Exported evidence</p><ul class="evidence-list"><li>Howler backend and load state</li><li>Duration and current position</li><li>Load, play, pause, seek, and error lifecycle events</li><li>Exact fixture SHA-256 and MP3 structure</li></ul><pre id="report-output" class="report-output" aria-live="polite">Use the controls, then export a report.</pre></article>
+      </section>
+    </main>
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>
