@@ -1,5 +1,23 @@
 [
   {
+    "version": "1.0.11",
+    "date": "2026-08-19",
+    "releasedAt": "2026-08-20T06:36:29.562Z",
+    "commit": "2685332f12dc92cfaee771d50a28ff4884f08c55",
+    "sourceSubject": "docs: publish package installation paths",
+    "title": "publish package installation paths",
+    "summary": "Production now includes: publish package installation paths.",
+    "notes": [
+      "publish package installation paths"
+    ],
+    "author": {
+      "name": "Ari Bradshaw",
+      "githubLogin": "aribradshaw",
+      "avatarUrl": null,
+      "profileUrl": null
+    }
+  },
+  {
     "version": "1.0.10",
     "date": "2026-08-19",
     "releasedAt": "2026-08-20T06:29:14.198Z",
