@@ -30,12 +30,12 @@ export function SiteFooter() {
     </div>
     <nav className="footer-links" aria-label="Footer navigation">
       <a href={base}>Open lab</a>
-      <a href={`${base}devlog/`}>Public DevLog</a>
       <a href="https://github.com/aribradshaw/audio-browser-lab">Source code</a>
       <a href="https://github.com/aribradshaw/audio-browser-lab/blob/main/LICENSE">MIT License</a>
     </nav>
     <div className="footer-meta">
       <span>v{currentVersion}</span>
+      <a href={`${base}devlog/`}>Public DevLog</a>
       <span>Files stay in your browser</span>
       <span>No usage tracking</span>
     </div>

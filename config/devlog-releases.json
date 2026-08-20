@@ -1,5 +1,16 @@
 [
   {
+    "version": "0.1.2",
+    "date": "2026-08-19",
+    "title": "Make the public trail unmistakable",
+    "summary": "Refined the footer so the DevLog and local-first privacy promises stay visible together.",
+    "notes": [
+      "Moved the public DevLog link into the release and privacy status cluster.",
+      "Replaced shorthand privacy claims with clearer language about local files and usage tracking."
+    ],
+    "commit": "main"
+  },
+  {
     "version": "0.1.1",
     "date": "2026-08-19",
     "title": "A clearer lab on every screen",

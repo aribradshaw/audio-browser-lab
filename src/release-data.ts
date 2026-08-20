@@ -9,6 +9,6 @@ export type ReleaseEntry = {
   commit: string
 }
 
-export const currentVersion = '0.1.1'
+export const currentVersion = '0.1.2'
 
 export const releases = releaseRegistry as ReleaseEntry[]
