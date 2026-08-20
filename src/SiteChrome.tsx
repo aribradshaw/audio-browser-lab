@@ -1,7 +1,38 @@
-import type { ReactNode } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 import { currentVersion } from './release-data'
 
 const base = import.meta.env.BASE_URL
+type SitePage = 'lab' | 'devlog'
+
+function SkeletonBar({ className = '' }: { className?: string }) {
+  return <span className={`skeleton-bar ${className}`} aria-hidden="true" />
+}
+
+function PageSkeleton({ page = 'lab' }: { page?: SitePage }) {
+  const isDevlog = page === 'devlog'
+
+  return <main id="main-content" className={`page-skeleton ${isDevlog ? 'devlog-page' : ''}`} aria-busy="true" aria-label="Loading page">
+    <section className="skeleton-hero">
+      <div className="skeleton-copy">
+        <SkeletonBar className="skeleton-kicker" />
+        <SkeletonBar className="skeleton-title" />
+        <SkeletonBar className="skeleton-title skeleton-title-short" />
+        <SkeletonBar className="skeleton-lede" />
+        <div className="skeleton-actions"><SkeletonBar className="skeleton-action" /><SkeletonBar className="skeleton-action" /></div>
+      </div>
+      <div className="skeleton-card"><SkeletonBar className="skeleton-card-label" /><SkeletonBar className="skeleton-card-title" /><SkeletonBar className="skeleton-card-copy" /><SkeletonBar className="skeleton-card-copy short" /></div>
+    </section>
+
+    {isDevlog ? <>
+      <section className="skeleton-section skeleton-history"><SkeletonBar className="skeleton-kicker" /><SkeletonBar className="skeleton-heading" /><div className="skeleton-release-list"><SkeletonBar /><SkeletonBar /><SkeletonBar /></div></section>
+      <section className="skeleton-cta"><SkeletonBar className="skeleton-heading" /><SkeletonBar className="skeleton-action" /></section>
+    </> : <>
+      <section className="skeleton-drop"><SkeletonBar className="skeleton-icon" /><div><SkeletonBar className="skeleton-kicker" /><SkeletonBar className="skeleton-heading" /><SkeletonBar className="skeleton-copy-line" /></div><SkeletonBar className="skeleton-action" /></section>
+      <section className="skeleton-section"><SkeletonBar className="skeleton-kicker" /><SkeletonBar className="skeleton-heading" /><div className="skeleton-grid"><SkeletonBar /><SkeletonBar /><SkeletonBar /></div></section>
+      <section className="skeleton-section skeleton-section-dark"><SkeletonBar className="skeleton-kicker" /><SkeletonBar className="skeleton-heading" /><div className="skeleton-grid"><SkeletonBar /><SkeletonBar /><SkeletonBar /><SkeletonBar /></div></section>
+    </>}
+  </main>
+}
 
 export function SiteHeader({ page = 'lab' }: { page?: 'lab' | 'devlog' }) {
   return <header className="site-header">
@@ -21,33 +52,70 @@ export function SiteHeader({ page = 'lab' }: { page?: 'lab' | 'devlog' }) {
 
 export function SiteFooter() {
   return <footer className="site-footer">
-    <div className="footer-brand">
-      <div className="flygon-lockup">
-        <img src={`${base}flygon-logo.png`} alt="" />
-        <span>A Flygon LC project</span>
+    <div className="site-footer-inner">
+      <div className="footer-brand">
+        <a className="footer-brand-link" href={base} aria-label="Audio Browser Lab home">
+          <img src={`${base}flygon-logo.png`} alt="" />
+          <span><small>A Flygon LC project</small><strong>Audio Browser Lab</strong></span>
+        </a>
+        <p>Open-source tools for evidence-first browser audio debugging.</p>
+        <div className="footer-privacy"><i /> <span>Files stay in your browser</span></div>
       </div>
-      <p>Open-source tools for evidence-first browser audio debugging.</p>
+      <nav className="footer-links" aria-label="Footer navigation">
+        <div className="footer-link-group">
+          <span className="footer-label">Explore</span>
+          <a href={base}>Open lab</a>
+          <a href={`${base}devlog/`}>Public DevLog</a>
+        </div>
+        <div className="footer-link-group">
+          <span className="footer-label">Project</span>
+          <a href="https://github.com/aribradshaw/audio-browser-lab">Source code</a>
+          <a href={`${base}sitemap.xml`}>Sitemap</a>
+          <a href="https://github.com/aribradshaw/audio-browser-lab/blob/main/LICENSE">MIT License</a>
+        </div>
+      </nav>
     </div>
-    <nav className="footer-links" aria-label="Footer navigation">
-      <a href={base}>Open lab</a>
-      <a href="https://github.com/aribradshaw/audio-browser-lab">Source code</a>
-      <a href="https://github.com/aribradshaw/audio-browser-lab/blob/main/LICENSE">MIT License</a>
-    </nav>
-    <div className="footer-meta">
-      <span>v{currentVersion}</span>
-      <a href={`${base}devlog/`}>Public DevLog</a>
-      <span>Files stay in your browser</span>
-      <span>No usage tracking</span>
+    <div className="footer-bottom">
+      <span>© 2026 Flygon LC</span>
+      <div className="footer-bottom-meta"><span>No usage tracking</span><span>v{currentVersion}</span></div>
     </div>
-    <p className="copyright">© 2026 Flygon LC. Code released under the MIT License.</p>
   </footer>
 }
 
-export function PageFrame({ children, page }: { children: ReactNode, page?: 'lab' | 'devlog' }) {
+export function PageFrame({ children, page = 'lab' }: { children: ReactNode, page?: SitePage }) {
+  const [ready, setReady] = useState(false)
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => setReady(true), 160)
+    const handleInternalNavigation = (event: MouseEvent) => {
+      if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return
+      const target = event.target instanceof Element ? event.target.closest('a') : null
+      if (!target || target.target === '_blank' || target.hasAttribute('download')) return
+      const url = new URL(target.href, window.location.href)
+      if (url.origin !== window.location.origin || (url.pathname === window.location.pathname && url.search === window.location.search)) return
+      event.preventDefault()
+      document.documentElement.dataset.pageTransition = 'exit'
+      window.setTimeout(() => window.location.assign(url.href), 180)
+    }
+
+    document.addEventListener('click', handleInternalNavigation)
+    return () => {
+      window.clearTimeout(timer)
+      document.removeEventListener('click', handleInternalNavigation)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (!ready) return
+    delete document.documentElement.dataset.pageTransition
+  }, [ready])
+
   return <>
     <a className="skip-link" href="#main-content">Skip to content</a>
     <SiteHeader page={page} />
-    {children}
+    <div className={`site-page ${ready ? 'is-ready' : 'is-loading'}`}>
+      {ready ? children : <PageSkeleton page={page} />}
+    </div>
     <SiteFooter />
   </>
 }

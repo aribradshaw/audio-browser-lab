@@ -13,3 +13,7 @@ audio file or URL
 `@audio-browser-lab/core` has no browser or Node dependency. It owns structure inspection, questions, diagnoses, and report comparison. The browser package adds native media, Web Audio, codec, seek, hashing, and remote-delivery measurements. Every other surface consumes the same core functions so the verdict does not drift between interfaces.
 
 The report SHA-256 protects cross-browser comparisons from the most common testing mistake: using different files with the same display name.
+
+## Site shell conventions
+
+Both public pages render through `PageFrame` in `src/SiteChrome.tsx`. Keep new pages inside that shell so they inherit the loading skeleton, staggered top-level module entrance, reduced-motion behavior, and same-origin exit transition. New static HTML entries are discovered by `scripts/generate-sitemap.mjs` during `npm run build` and included in `public/sitemap.xml`.

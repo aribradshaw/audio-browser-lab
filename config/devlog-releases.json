@@ -1,6 +1,18 @@
 [
   {
-    "version": "0.1.2",
+    "version": "1.0.4",
+    "date": "2026-08-19",
+    "title": "Polish loading and site discovery",
+    "summary": "Made movement between the lab and DevLog feel intentional while helping people and search engines find every public page.",
+    "notes": [
+      "Added responsive loading skeletons and reduced-motion-aware page transitions.",
+      "Rebuilt the footer around clearer project, privacy, source, DevLog, and sitemap paths.",
+      "Generated a public sitemap during every development and production build."
+    ],
+    "commit": "main"
+  },
+  {
+    "version": "1.0.3",
     "date": "2026-08-19",
     "title": "Make the public trail unmistakable",
     "summary": "Refined the footer so the DevLog and local-first privacy promises stay visible together.",
@@ -11,7 +23,7 @@
     "commit": "main"
   },
   {
-    "version": "0.1.1",
+    "version": "1.0.2",
     "date": "2026-08-19",
     "title": "A clearer lab on every screen",
     "summary": "Rebuilt the public experience around a faster path from audio file to useful evidence.",
@@ -23,7 +35,7 @@
     "commit": "main"
   },
   {
-    "version": "0.1.0",
+    "version": "1.0.1",
     "date": "2026-08-19",
     "title": "The full toolkit leaves the bench",
     "summary": "Turned the browser experiment into an installable, multi-surface audio diagnostics toolkit.",

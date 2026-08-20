@@ -1,4 +1,5 @@
 import { readFileSync } from 'node:fs'
+import { nextMonthlyVersion } from './monthly-version.mjs'
 
 const pkg = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8'))
 const entries = JSON.parse(readFileSync(new URL('../config/devlog-releases.json', import.meta.url), 'utf8'))
@@ -15,6 +16,19 @@ for (const entry of entries) {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(entry.date)) throw new Error(`Invalid release date for ${entry.version}.`)
   if (!entry.title || !entry.summary || !Array.isArray(entry.notes) || entry.notes.length === 0) throw new Error(`Release ${entry.version} needs public-facing notes.`)
   seen.add(entry.version)
+}
+
+const chronological = [...entries].reverse()
+for (let index = 1; index < chronological.length; index += 1) {
+  const previous = chronological[index - 1]
+  const current = chronological[index]
+  const expected = nextMonthlyVersion(previous.version, {
+    latestReleaseDate: previous.date,
+    releaseAt: current.date,
+  })
+  if (current.version !== expected) {
+    throw new Error(`Release ${current.version} breaks the monthly sequence; expected ${expected}.`)
+  }
 }
 
 console.log(`Release ${pkg.version} has a valid public DevLog entry.`)

@@ -45,11 +45,11 @@ npm install
 npm run dev
 ```
 
-Open `http://127.0.0.1:4173`. Choose an audio file, export its report, repeat in another browser, then select both JSON files in the comparison panel.
+Open `http://127.0.0.1:4173`. Choose an audio file, export its report, repeat in another browser, then select both JSON files in the comparison panel. The build generates a sitemap for the public lab and DevLog pages.
 
 ## Release practice
 
-Public updates use a three-part semantic version such as `0.1.1`. Every version must have a plain-English entry in `config/devlog-releases.json`; `npm run release:check` keeps the package and public DevLog in sync. The newest entry appears first at `/devlog/`.
+Public updates use the same Phoenix-calendar three-part cadence as the sister projects. Updates in the same month increment the third number. A new month advances the second number and resets the third to `1`. A new year advances the first number, sets the second number to the zero-based Arizona month, and resets the third to `1`. Every version must have a plain-English entry in `config/devlog-releases.json`; `npm run release:check` enforces the calendar sequence and keeps the package and public DevLog in sync. The newest entry appears first at `/devlog/`.
 
 ### CLI
 

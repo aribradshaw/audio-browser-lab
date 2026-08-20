@@ -30,7 +30,6 @@ export default function Devlog() {
             <span className="tiny-label">Release history</span>
             <h2 id="release-history-title">WHAT SHIPPED</h2>
           </div>
-          <p>Newest first. No marketing fog.</p>
         </div>
         <ol className="release-list">
           {releases.map((release, index) => <li className="release-entry" key={release.version}>
