@@ -1,5 +1,21 @@
 [
   {
+    "version": "1.0.7",
+    "date": "2026-08-19",
+    "title": "Make release evidence portable",
+    "summary": "Expanded the headless DevLog engine with validated release data, deployment lifecycle primitives, batched commit evidence, and reusable collection behavior.",
+    "notes": [
+      "Added runtime checks that reject malformed, duplicated, or mismatched public release records before the site builds.",
+      "Added reusable lifecycle, included-commit, source fallback, release selection, highlighting, date, and pagination models without changing the pixel interface.",
+      "Proved the expanded package in Audio Browser Lab while keeping storage, routing, copy, and visual design under project control."
+    ],
+    "commit": null,
+    "author": {
+      "name": "Ari Bradshaw",
+      "githubLogin": "aribradshaw"
+    }
+  },
+  {
     "version": "1.0.6",
     "date": "2026-08-19",
     "title": "Make every release attributable",

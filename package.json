@@ -1,7 +1,7 @@
 {
   "name": "audio-browser-lab",
   "private": true,
-  "version": "1.0.6",
+  "version": "1.0.7",
   "type": "module",
   "bin": {
     "abl": "packages/cli/dist/index.js",
@@ -40,7 +40,7 @@
     "prepare": "npm run build:packages"
   },
   "dependencies": {
-    "@aribradshaw/devlog": "1.0.0",
+    "@aribradshaw/devlog": "1.0.3",
     "react": "^19.2.8",
     "react-dom": "^19.2.8"
   },

@@ -1,8 +1,24 @@
 import releaseRegistry from '../config/devlog-releases.json'
-import type { DevLogEntry } from '@aribradshaw/devlog'
+import packageJson from '../package.json'
+import { resolveCurrentDevLogRelease, validateDevLogEntries, type DevLogEntry } from '@aribradshaw/devlog'
 
 export type ReleaseEntry = DevLogEntry & { summary: string }
 
-export const currentVersion = '1.0.6'
+export const currentVersion = packageJson.version
 
-export const releases = releaseRegistry as ReleaseEntry[]
+const validated = validateDevLogEntries(releaseRegistry, {
+  requireAuthor: true,
+  rejectAuthorEmail: true,
+  rejectTicketTitle: true,
+})
+
+if (!validated || validated.some((entry) => !entry.summary)) {
+  throw new Error('Audio Browser Lab has an invalid public DevLog registry.')
+}
+
+export const releases = validated as ReleaseEntry[]
+export const currentRelease = resolveCurrentDevLogRelease(releases, currentVersion)
+
+if (!currentRelease.matched) {
+  throw new Error(`Audio Browser Lab ${currentVersion} is missing from the public DevLog.`)
+}

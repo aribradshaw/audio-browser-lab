@@ -1,4 +1,4 @@
-import { createDevLogCapabilities, resolveDevLogSourceMeta } from '@aribradshaw/devlog'
+import { createDevLogCapabilities, formatDevLogDate, resolveDevLogSourceMeta } from '@aribradshaw/devlog'
 import { PageFrame } from './SiteChrome'
 import { currentVersion, releases, type ReleaseEntry } from './release-data'
 import './devlog-source-meta.css'
@@ -70,7 +70,7 @@ export default function Devlog() {
           {releases.map((release, index) => <li className="release-entry" key={release.version}>
             <div className="release-rail">
               <span className="release-number">{String(releases.length - index).padStart(3, '0')}</span>
-              <time dateTime={release.date}>{new Date(`${release.date}T12:00:00`).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</time>
+              <time dateTime={release.date}>{formatDevLogDate(release.date)}</time>
             </div>
             <article>
               <div className="release-title-row">
