@@ -10,7 +10,7 @@ const jsonText = (value: unknown) => ({ content: [{ type: 'text' as const, text:
 const readReport = async (path: string) => JSON.parse(await readFile(path, 'utf8')) as AudioBrowserReport
 
 export function createAudioBrowserLabMcpServer() {
-  const server = new McpServer({ name: 'audio-browser-lab', version: '0.1.0' })
+  const server = new McpServer({ name: 'audio-browser-lab', version: '1.0.8' })
 
   server.registerTool('inspect_audio_file', {
     description: 'Inspect a local audio file without uploading it. Returns MP3 structure, a SHA-256 identity, evidence-backed findings, and repair advice.',

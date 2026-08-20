@@ -1,6 +1,6 @@
 {
   "name": "@audio-browser-lab/howler",
-  "version": "0.1.0",
+  "version": "1.0.8",
   "description": "Howler.js diagnostics adapter for Audio Browser Lab.",
   "type": "module",
   "sideEffects": false,
@@ -13,10 +13,13 @@
     "check": "tsc --noEmit",
     "test": "vitest run"
   },
-  "dependencies": { "@audio-browser-lab/core": "*" },
+  "dependencies": { "@audio-browser-lab/core": "1.0.8" },
   "peerDependencies": { "howler": ">=2.2.0" },
   "peerDependenciesMeta": { "howler": { "optional": true } },
+  "keywords": ["howler", "audio", "browser-audio", "debugging", "diagnostics", "seek"],
   "license": "MIT",
   "repository": { "type": "git", "url": "git+https://github.com/aribradshaw/audio-browser-lab.git", "directory": "packages/howler" },
+  "homepage": "https://aribradshaw.github.io/audio-browser-lab/docs/",
+  "bugs": { "url": "https://github.com/aribradshaw/audio-browser-lab/issues" },
   "publishConfig": { "access": "public" }
 }

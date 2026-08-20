@@ -1,7 +1,7 @@
 {
   "name": "audio-browser-lab",
   "private": true,
-  "version": "1.0.7",
+  "version": "1.0.8",
   "type": "module",
   "bin": {
     "abl": "packages/cli/dist/index.js",
@@ -37,6 +37,7 @@
     "test:watch": "vitest",
     "preview": "vite preview",
     "abl": "node packages/cli/dist/index.js",
+    "pack:check": "node scripts/verify-packages.mjs",
     "prepare": "npm run build:packages"
   },
   "dependencies": {

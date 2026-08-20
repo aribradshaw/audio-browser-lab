@@ -11,7 +11,7 @@ import {
   type DiagnosticFinding,
 } from '@audio-browser-lab/core'
 
-export const VERSION = '0.1.0'
+export const VERSION = '1.0.8'
 
 const usage = `Audio Browser Lab CLI
 
@@ -59,7 +59,7 @@ async function readReport(path: string) {
 }
 
 export async function inspectUrl(url: string) {
-  const headers = { 'User-Agent': 'audio-browser-lab/0.1' }
+  const headers = { 'User-Agent': `audio-browser-lab/${VERSION}` }
   let head: Response | undefined
   try { head = await fetch(url, { method: 'HEAD', headers, redirect: 'follow' }) } catch { /* Range still may work. */ }
   const range = await fetch(url, { headers: { ...headers, Range: 'bytes=0-0' }, redirect: 'follow' })

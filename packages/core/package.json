@@ -1,6 +1,6 @@
 {
   "name": "@audio-browser-lab/core",
-  "version": "0.1.0",
+  "version": "1.0.8",
   "description": "Browser-neutral audio inspection, diagnosis, and report comparison.",
   "type": "module",
   "sideEffects": false,
@@ -21,6 +21,8 @@
   "keywords": ["audio", "mp3", "browser", "diagnostics", "howler", "wavesurfer"],
   "license": "MIT",
   "repository": { "type": "git", "url": "git+https://github.com/aribradshaw/audio-browser-lab.git", "directory": "packages/core" },
+  "homepage": "https://aribradshaw.github.io/audio-browser-lab/docs/",
+  "bugs": { "url": "https://github.com/aribradshaw/audio-browser-lab/issues" },
   "publishConfig": { "access": "public" },
   "engines": { "node": ">=20" }
 }

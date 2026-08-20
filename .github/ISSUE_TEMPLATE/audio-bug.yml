@@ -1,0 +1,63 @@
+name: Browser-audio bug
+description: Bring a reproducible seek, duration, decode, delivery, Howler, or WaveSurfer failure.
+title: "[audio bug]: "
+labels: ["audio-bug", "needs-reproduction"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Strong reports let us separate the asset, browser, delivery layer, and player library before proposing a fix. Do not upload audio you cannot redistribute.
+  - type: textarea
+    id: failure
+    attributes:
+      label: What failed?
+      description: Describe the expected behavior and what happened instead.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal reproduction
+      description: Include the smallest code sample or public reproduction URL and exact steps.
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Browser, operating system, and device
+      placeholder: Safari 18.6, iOS 18.6, iPhone 15
+    validations:
+      required: true
+  - type: dropdown
+    id: backend
+    attributes:
+      label: Playback layer
+      options:
+        - Native HTMLMediaElement
+        - Web Audio API
+        - Howler HTML5 backend
+        - Howler Web Audio backend
+        - WaveSurfer MediaElement backend
+        - WaveSurfer WebAudio backend
+        - Other or unknown
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Audio Browser Lab evidence
+      description: Drag in exported JSON reports, CLI output, the file SHA-256, or a link to a small public fixture.
+    validations:
+      required: true
+  - type: textarea
+    id: delivery
+    attributes:
+      label: Delivery details
+      description: For remote media, include Content-Type, Content-Length, Accept-Ranges, Content-Range, status codes, CORS, and service-worker behavior.
+  - type: checkboxes
+    id: rights
+    attributes:
+      label: Fixture rights
+      options:
+        - label: I have the right to redistribute any attached audio fixture.
+          required: true

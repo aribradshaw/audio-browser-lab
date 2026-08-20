@@ -1,6 +1,6 @@
 {
   "name": "@audio-browser-lab/api",
-  "version": "0.1.0",
+  "version": "1.0.8",
   "description": "Embeddable local HTTP API for Audio Browser Lab diagnostics.",
   "type": "module",
   "main": "./dist/index.js",
@@ -8,9 +8,12 @@
   "exports": { ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js" } },
   "files": ["dist", "README.md"],
   "scripts": { "build": "tsup src/index.ts --format esm --dts --clean", "check": "tsc --noEmit", "test": "vitest run" },
-  "dependencies": { "@audio-browser-lab/core": "*" },
+  "dependencies": { "@audio-browser-lab/core": "1.0.8" },
+  "keywords": ["audio", "mp3", "api", "browser-audio", "debugging", "diagnostics"],
   "license": "MIT",
   "repository": { "type": "git", "url": "git+https://github.com/aribradshaw/audio-browser-lab.git", "directory": "packages/api" },
+  "homepage": "https://aribradshaw.github.io/audio-browser-lab/docs/",
+  "bugs": { "url": "https://github.com/aribradshaw/audio-browser-lab/issues" },
   "publishConfig": { "access": "public" },
   "engines": { "node": ">=20" }
 }

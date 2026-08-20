@@ -2,6 +2,11 @@
 
 Browser-audio forensics without guesswork. Audio Browser Lab inspects the asset, measures independent browser clocks, probes real seeks and HTTP range delivery, and produces portable evidence for cross-browser comparison.
 
+[![Quality](https://github.com/aribradshaw/audio-browser-lab/actions/workflows/ci.yml/badge.svg)](https://github.com/aribradshaw/audio-browser-lab/actions/workflows/ci.yml)
+[![npm](https://img.shields.io/npm/v/@audio-browser-lab/core?label=npm)](https://www.npmjs.com/org/audio-browser-lab)
+[![MIT License](https://img.shields.io/badge/license-MIT-315b3d.svg)](LICENSE)
+[![GitHub stars](https://img.shields.io/github/stars/aribradshaw/audio-browser-lab?style=flat)](https://github.com/aribradshaw/audio-browser-lab/stargazers)
+
 **[Open the web lab](https://aribradshaw.github.io/audio-browser-lab/)**
 
 **[Read the public DevLog](https://aribradshaw.github.io/audio-browser-lab/devlog/)**
@@ -64,11 +69,11 @@ npm run abl -- inspect-url https://example.com/problem.mp3
 npm run abl -- compare chrome.json safari.json
 ```
 
-Install the repository as a Git dependency in another project to expose the `abl` and `audio-browser-lab-mcp` binaries immediately:
+Run the CLI without cloning the repository:
 
 ```sh
-npm install --save-dev github:aribradshaw/audio-browser-lab
-npx abl inspect ./problem.mp3
+npx @audio-browser-lab/cli inspect ./problem.mp3
+npx @audio-browser-lab/cli inspect-url https://example.com/problem.mp3
 ```
 
 ### SDK
@@ -107,14 +112,14 @@ Routes: `GET /health`, `GET /v1/questions`, `POST /v1/diagnose`, `POST /v1/compa
 
 ### MCP
 
-After the Git dependency install above:
+Run the published MCP server directly:
 
 ```json
 {
   "mcpServers": {
     "audio-browser-lab": {
       "command": "npx",
-      "args": ["audio-browser-lab-mcp"]
+      "args": ["-y", "@audio-browser-lab/mcp"]
     }
   }
 }
@@ -122,7 +127,7 @@ After the Git dependency install above:
 
 The server exposes `inspect_audio_file`, `diagnose_audio_report`, `compare_browser_reports`, `inspect_remote_audio`, `list_audio_questions`, and `generate_repair_plan`.
 
-The seven audio packages are independently built, typed, licensed, and ready for npm publication. They are not claimed as npm-hosted until the `@audio-browser-lab` scope is connected to a publisher account.
+The seven audio packages are independently built, typed, licensed, and published under the [`@audio-browser-lab`](https://www.npmjs.com/org/audio-browser-lab) organization.
 
 The site uses [`@aribradshaw/devlog`](https://github.com/aribradshaw/devlog), a project-neutral headless package for author metadata, GitHub commit links, feature policies, search, and pagination. Audio Browser Lab is its first visual integration while retaining this project's own interface and release data.
 
@@ -136,7 +141,14 @@ The engine currently answers eight evidence paths, including the Howler mismatch
 npm run check
 npm test
 npm run build
+npm run pack:check
 ```
+
+## Bring a browser-audio bug
+
+The most useful reports include a redistributable fixture, exact browser and operating-system versions, the player backend, reproduction steps, and exported Audio Browser Lab JSON. [Open a structured bug report](https://github.com/aribradshaw/audio-browser-lab/issues/new/choose) or read the [contribution guide](CONTRIBUTING.md).
+
+If Audio Browser Lab saves you a cross-browser debugging session, star the repository so the next developer can find it.
 
 ## Documentation
 

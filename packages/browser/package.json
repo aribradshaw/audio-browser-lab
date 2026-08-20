@@ -1,6 +1,6 @@
 {
   "name": "@audio-browser-lab/browser",
-  "version": "0.1.0",
+  "version": "1.0.8",
   "description": "Browser audio measurement SDK for Audio Browser Lab.",
   "type": "module",
   "sideEffects": false,
@@ -19,10 +19,12 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@audio-browser-lab/core": "*"
+    "@audio-browser-lab/core": "1.0.8"
   },
   "keywords": ["web-audio", "htmlmediaelement", "browser", "audio", "diagnostics"],
   "license": "MIT",
   "repository": { "type": "git", "url": "git+https://github.com/aribradshaw/audio-browser-lab.git", "directory": "packages/browser" },
+  "homepage": "https://aribradshaw.github.io/audio-browser-lab/docs/",
+  "bugs": { "url": "https://github.com/aribradshaw/audio-browser-lab/issues" },
   "publishConfig": { "access": "public" }
 }

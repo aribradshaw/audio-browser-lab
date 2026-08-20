@@ -1,5 +1,21 @@
 [
   {
+    "version": "1.0.8",
+    "date": "2026-08-19",
+    "title": "Put the lab on every workbench",
+    "summary": "Published Audio Browser Lab as a coordinated npm toolkit and tightened the path from browser-audio bug to reproducible upstream evidence.",
+    "notes": [
+      "Prepared seven independently installable packages under the public @audio-browser-lab organization.",
+      "Added package verification, exact internal version alignment, and practical install paths for browser, CLI, API, Howler, WaveSurfer, and MCP users.",
+      "Expanded contribution and issue-reporting surfaces around redistributable fixtures, exported reports, and evidence-backed upstream fixes."
+    ],
+    "commit": null,
+    "author": {
+      "name": "Ari Bradshaw",
+      "githubLogin": "aribradshaw"
+    }
+  },
+  {
     "version": "1.0.7",
     "date": "2026-08-19",
     "title": "Make release evidence portable",

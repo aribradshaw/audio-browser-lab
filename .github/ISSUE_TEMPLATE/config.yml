@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Open Audio Browser Lab
+    url: https://aribradshaw.github.io/audio-browser-lab/
+    about: Reproduce the problem locally and export a report before opening an issue.
+  - name: Read the diagnostic documentation
+    url: https://aribradshaw.github.io/audio-browser-lab/docs/
+    about: Review the supported evidence paths and integration surfaces.

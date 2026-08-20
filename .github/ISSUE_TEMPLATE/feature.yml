@@ -1,0 +1,26 @@
+name: Diagnostic capability
+description: Propose a new evidence path, integration, report field, or reproducible fixture.
+title: "[capability]: "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: question
+    attributes:
+      label: What debugging question should this answer?
+      description: Phrase the need as a concrete question a developer cannot answer today.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: What evidence would answer it?
+      description: List browser clocks, headers, metadata, events, fingerprints, or cross-browser comparisons needed.
+    validations:
+      required: true
+  - type: textarea
+    id: consumers
+    attributes:
+      label: Where should it be usable?
+      placeholder: Web lab, core package, browser SDK, CLI, API, MCP, Howler adapter, WaveSurfer adapter
+    validations:
+      required: true
