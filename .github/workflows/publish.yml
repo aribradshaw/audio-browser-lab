@@ -1,26 +1,29 @@
 name: Publish npm packages
 
 on:
-  release:
-    types: [published]
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: Existing production release tag to publish
+        required: true
+        type: string
 
 permissions:
   contents: read
   id-token: write
 
 concurrency:
-  group: npm-publish-${{ github.event.release.tag_name }}
+  group: npm-publish-${{ inputs.release_tag }}
   cancel-in-progress: false
 
 jobs:
   publish:
-    if: github.event.release.draft == false && github.event.release.prerelease == false
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
         with:
           fetch-depth: 0
-          ref: ${{ github.event.release.tag_name }}
+          ref: ${{ inputs.release_tag }}
       - uses: actions/setup-node@v7
         with:
           node-version: 22.22.2
@@ -32,12 +35,18 @@ jobs:
       - name: Verify release and package versions
         shell: bash
         env:
-          RELEASE_TAG: ${{ github.event.release.tag_name }}
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ inputs.release_tag }}
         run: |
           set -euo pipefail
           ROOT_VERSION="$(node -p 'require("./package.json").version')"
           if [ "${RELEASE_TAG}" != "v${ROOT_VERSION}" ]; then
             echo "Release tag ${RELEASE_TAG} does not match root version v${ROOT_VERSION}." >&2
+            exit 1
+          fi
+          RELEASE_STATE="$(gh release view "${RELEASE_TAG}" --repo "${GITHUB_REPOSITORY}" --json isDraft,isPrerelease --jq '[.isDraft, .isPrerelease] | @tsv')"
+          if [ "${RELEASE_STATE}" != $'false\tfalse' ]; then
+            echo "${RELEASE_TAG} is not a published production release." >&2
             exit 1
           fi
           for PACKAGE_DIR in packages/core packages/browser packages/howler packages/wavesurfer packages/cli packages/api packages/mcp; do

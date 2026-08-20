@@ -4,6 +4,7 @@ on:
     branches: [main]
   pull_request:
 permissions:
+  actions: write
   contents: write
   pages: write
   id-token: write
@@ -143,3 +144,9 @@ jobs:
             --verify-tag \
             --title "Audio Browser Lab ${TAG}" \
             --notes-file "${NOTES_FILE}"
+      - name: Dispatch npm package publication
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_VERSION: ${{ needs.test.outputs.release_version }}
+        run: gh workflow run publish.yml --repo "${GITHUB_REPOSITORY}" --ref main -f "release_tag=v${RELEASE_VERSION}"
