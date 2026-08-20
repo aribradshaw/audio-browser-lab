@@ -1,62 +1,127 @@
 # Audio Browser Lab
 
-A local-first browser audio compatibility and diagnostics workbench.
+Browser-audio forensics without guesswork. Audio Browser Lab inspects the asset, measures independent browser clocks, probes real seeks and HTTP range delivery, and produces portable evidence for cross-browser comparison.
 
-Audio Browser Lab helps developers investigate cases where the same audio file reports a different duration, seeks differently, or behaves differently across Chrome, Firefox, Safari, and other browsers. Files are analyzed entirely inside the browser and are never uploaded.
+It is a Flygon LC project with a local-first rule: selected audio never leaves the browser. The CLI and MCP server read local files directly. No account, analytics, or hosted backend is required.
 
-## Current capabilities
+## The Howler question
 
-- Load a local audio file or a generated reference tone
-- Record HTMLMediaElement duration, seekable ranges, and buffered ranges
-- Decode the complete asset with Web Audio and compare the decoded duration
-- Run an exact seek probe and record the browser-reported landing point
-- Inspect `canPlayType` signals for common web audio formats
-- Capture the browser environment and relevant media events
-- Copy or download a portable JSON report for comparison across browsers
+> Why can the same Howler timestamp play different audio in Chrome, Firefox, and Safari?
 
-Web Audio may resample decoded PCM to the `AudioContext` sample rate. The lab reports that resulting rate and frame count while comparing duration in seconds, which remains the useful cross-browser timeline measurement.
+Howler is only one layer. Its Web Audio and HTML5 backends can inherit different browser timelines from the same compressed asset. A variable-bitrate MP3 without a Xing, Info, or VBRI seek index makes the problem worse because each decoder may estimate time-to-byte positions differently.
 
-## Why it exists
+Audio Browser Lab tests that explanation instead of assuming it. It reports:
 
-Browser audio bugs are often reported as “the timestamp is wrong” or “Safari behaves differently.” The hard part is identifying which layer disagrees:
+1. MP3 frames, bitrate mode, ID3 offset, and seek-table metadata
+2. Native `HTMLMediaElement.duration`
+3. Fully decoded Web Audio duration and PCM memory cost
+4. Requested versus reported seek positions
+5. Decoded-window fingerprints around seek targets
+6. Howler backend, duration, position, and event evidence through the adapter
+7. The same measurements in a portable report that another browser can compare
 
-1. The compressed file and its metadata
-2. The browser's media demuxer
-3. Web Audio decoding
-4. A playback library such as Howler or wavesurfer.js
-5. The application itself
+See [the full Howler case study](docs/HOWLER-CASE-STUDY.md).
 
-This lab exposes the browser-level evidence before someone starts adding fragile offsets or library-specific workarounds.
+## Seven ways to use it
 
-## Local development
+| Surface | Best use |
+| --- | --- |
+| Web lab | Reproduce and export browser evidence with no install |
+| `@audio-browser-lab/core` | Inspect MP3s, diagnose reports, or compare reports in any JS project |
+| `@audio-browser-lab/browser` | Add the complete local browser analysis flow to an app |
+| `@audio-browser-lab/howler` | Capture Howler backend, timeline, and events |
+| `@audio-browser-lab/wavesurfer` | Capture waveform timeline and rendering evidence |
+| `@audio-browser-lab/cli` | Inspect files or gate fixtures in a terminal and CI |
+| `@audio-browser-lab/api` / `mcp` | Connect other stacks or give coding agents the same evidence tools |
+
+## Quick start
 
 ```sh
 npm install
 npm run dev
 ```
 
-Then open `http://127.0.0.1:4173`.
+Open `http://127.0.0.1:4173`. Choose an audio file, export its report, repeat in another browser, then select both JSON files in the comparison panel.
 
-## Production build
+### CLI
+
+```sh
+npm run build:packages
+npm run abl -- inspect ./problem.mp3
+npm run abl -- inspect ./problem.mp3 --json > chrome-asset.json
+npm run abl -- questions
+npm run abl -- inspect-url https://example.com/problem.mp3
+npm run abl -- compare chrome.json safari.json
+```
+
+### SDK
+
+```ts
+import { analyzeBrowserFile } from '@audio-browser-lab/browser'
+
+const report = await analyzeBrowserFile(file, {
+  seekTargets: [1, 30, 120],
+})
+```
+
+### Howler adapter
+
+```ts
+import { observeHowl } from '@audio-browser-lab/howler'
+
+const observation = observeHowl(howl, {
+  version: '2.2.4',
+  backend: Howler.usingWebAudio ? 'webaudio' : 'html5',
+})
+
+const integrationEvidence = observation.snapshot()
+```
+
+### Local HTTP API
+
+```ts
+import { createAudioBrowserLabApi } from '@audio-browser-lab/api'
+
+createAudioBrowserLabApi({ corsOrigin: 'http://localhost:3000' }).listen(8787)
+```
+
+Routes: `GET /health`, `GET /v1/questions`, `POST /v1/diagnose`, `POST /v1/compare`, and `POST /v1/inspect/mp3`.
+
+### MCP
+
+```json
+{
+  "mcpServers": {
+    "audio-browser-lab": {
+      "command": "npx",
+      "args": ["-y", "@audio-browser-lab/mcp"]
+    }
+  }
+}
+```
+
+The server exposes `inspect_audio_file`, `diagnose_audio_report`, `compare_browser_reports`, `inspect_remote_audio`, `list_audio_questions`, and `generate_repair_plan`.
+
+## Questions covered
+
+The engine currently answers eight evidence paths, including the Howler mismatch, cross-browser duration differences, WaveSurfer timeline drift, audio sprite drift, Safari decode failures, broken remote seeks, long-audio memory crashes, and `canPlayType` false confidence. Read [the question catalog](docs/QUESTIONS.md).
+
+## Verification
 
 ```sh
 npm run check
+npm test
 npm run build
-npm run preview
 ```
 
-## Privacy
+## Documentation
 
-Audio Browser Lab has no backend, uploads, accounts, or analytics. A selected file is represented by a temporary local object URL in the current browser tab.
-
-## Roadmap
-
-- Side-by-side report comparison
-- MP3 frame, ID3, Xing, Info, and VBRI inspection
-- Waveform and audible seek-marker verification
-- Media Source Extensions and HTTP Range diagnostics
-- Shareable test fixtures and regression cases
-- Automated browser test matrix
+- [Architecture](docs/ARCHITECTURE.md)
+- [Integrations](docs/INTEGRATION.md)
+- [Howler case study](docs/HOWLER-CASE-STUDY.md)
+- [Diagnostic questions](docs/QUESTIONS.md)
+- [Contributing](CONTRIBUTING.md)
+- [Security](SECURITY.md)
 
 ## License
 

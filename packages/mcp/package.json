@@ -1,0 +1,23 @@
+{
+  "name": "@audio-browser-lab/mcp",
+  "version": "0.1.0",
+  "description": "MCP server that gives coding agents evidence-based browser audio diagnostics.",
+  "type": "module",
+  "bin": { "audio-browser-lab-mcp": "./dist/index.js" },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": { ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js" } },
+  "files": ["dist", "README.md"],
+  "scripts": { "build": "tsup src/index.ts --format esm --dts --clean", "check": "tsc --noEmit", "test": "vitest run" },
+  "dependencies": {
+    "@audio-browser-lab/cli": "*",
+    "@audio-browser-lab/core": "*",
+    "@modelcontextprotocol/server": "^2.0.0",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": { "@modelcontextprotocol/client": "^2.0.0" },
+  "license": "MIT",
+  "repository": { "type": "git", "url": "git+https://github.com/aribradshaw/audio-browser-lab.git", "directory": "packages/mcp" },
+  "publishConfig": { "access": "public" },
+  "engines": { "node": ">=20" }
+}

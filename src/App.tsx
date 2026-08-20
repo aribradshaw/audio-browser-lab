@@ -1,453 +1,124 @@
-import { ChangeEvent, DragEvent, useEffect, useMemo, useRef, useState } from 'react'
+import { ChangeEvent, DragEvent, useMemo, useRef, useState } from 'react'
+import { analyzeBrowserFile, getCodecSignals, probeRemoteAudio } from '@audio-browser-lab/browser'
+import { compareReports, diagnoseReport, questionCatalog, type AudioBrowserReport, type NetworkEvidence, type ReportComparison } from '@audio-browser-lab/core'
 
-type DecodeResult = {
-  duration: number
-  sampleRate: number
-  channels: number
-  frames: number
-  decodeMs: number
+const fmtTime = (value?: number | null) => value == null || !Number.isFinite(value) ? 'N/A' : `${value.toFixed(6)} s`
+const fmtBytes = (value?: number | null) => {
+  if (value == null) return 'N/A'
+  const units = ['B', 'KB', 'MB', 'GB']; let n = value; let unit = 0
+  while (n >= 1024 && unit < units.length - 1) { n /= 1024; unit += 1 }
+  return `${n.toFixed(unit ? 2 : 0)} ${units[unit]}`
 }
 
-type SeekResult = {
-  requested: number
-  reported: number
-  delta: number
-  completedMs: number
-}
-
-type MediaSnapshot = {
-  duration: number | null
-  readyState: number
-  networkState: number
-  seekable: Array<[number, number]>
-  buffered: Array<[number, number]>
-}
-
-type LogEntry = {
-  at: string
-  event: string
-  detail?: string
-}
-
-type NavigatorWithMemory = Navigator & { deviceMemory?: number }
-
-const codecTests = [
-  ['MP3', 'audio/mpeg'],
-  ['AAC / M4A', 'audio/mp4; codecs="mp4a.40.2"'],
-  ['WAV PCM', 'audio/wav; codecs="1"'],
-  ['Ogg Vorbis', 'audio/ogg; codecs="vorbis"'],
-  ['Opus / WebM', 'audio/webm; codecs="opus"'],
-  ['FLAC', 'audio/flac'],
-] as const
-
-const formatSeconds = (value: number | null | undefined) => {
-  if (value == null || !Number.isFinite(value)) return 'Unavailable'
-  return `${value.toFixed(6)} s`
-}
-
-const formatBytes = (bytes: number) => {
-  const units = ['B', 'KB', 'MB', 'GB']
-  let value = bytes
-  let unit = 0
-  while (value >= 1024 && unit < units.length - 1) {
-    value /= 1024
-    unit += 1
-  }
-  return `${value.toFixed(unit === 0 ? 0 : 2)} ${units[unit]}`
-}
-
-const rangesToArray = (ranges: TimeRanges): Array<[number, number]> =>
-  Array.from({ length: ranges.length }, (_, index) => [ranges.start(index), ranges.end(index)])
-
-function createTestTone(): File {
-  const sampleRate = 44_100
-  const duration = 12
-  const samples = sampleRate * duration
-  const buffer = new ArrayBuffer(44 + samples * 2)
-  const view = new DataView(buffer)
-  const write = (offset: number, value: string) =>
-    [...value].forEach((character, index) => view.setUint8(offset + index, character.charCodeAt(0)))
-
-  write(0, 'RIFF')
-  view.setUint32(4, 36 + samples * 2, true)
-  write(8, 'WAVE')
-  write(12, 'fmt ')
-  view.setUint32(16, 16, true)
-  view.setUint16(20, 1, true)
-  view.setUint16(22, 1, true)
-  view.setUint32(24, sampleRate, true)
-  view.setUint32(28, sampleRate * 2, true)
-  view.setUint16(32, 2, true)
-  view.setUint16(34, 16, true)
-  write(36, 'data')
-  view.setUint32(40, samples * 2, true)
-
-  for (let index = 0; index < samples; index += 1) {
-    const time = index / sampleRate
-    const secondPulse = time % 1 < 0.045 ? Math.sin(2 * Math.PI * 1320 * time) * 0.35 : 0
-    const tone = Math.sin(2 * Math.PI * 220 * time) * 0.16
-    view.setInt16(44 + index * 2, Math.max(-1, Math.min(1, tone + secondPulse)) * 0x7fff, true)
-  }
-
+function referenceTone() {
+  const rate = 44_100, duration = 12, samples = rate * duration
+  const buffer = new ArrayBuffer(44 + samples * 2), view = new DataView(buffer)
+  const text = (offset: number, value: string) => [...value].forEach((char, i) => view.setUint8(offset + i, char.charCodeAt(0)))
+  text(0, 'RIFF'); view.setUint32(4, 36 + samples * 2, true); text(8, 'WAVE'); text(12, 'fmt ')
+  view.setUint32(16, 16, true); view.setUint16(20, 1, true); view.setUint16(22, 1, true); view.setUint32(24, rate, true)
+  view.setUint32(28, rate * 2, true); view.setUint16(32, 2, true); view.setUint16(34, 16, true); text(36, 'data'); view.setUint32(40, samples * 2, true)
+  for (let i = 0; i < samples; i += 1) view.setInt16(44 + i * 2, Math.sin(2 * Math.PI * (220 + Math.floor(i / rate) * 18) * i / rate) * 0x3000, true)
   return new File([buffer], 'abl-reference-tone-12s.wav', { type: 'audio/wav' })
 }
 
+function downloadJson(report: AudioBrowserReport) {
+  const url = URL.createObjectURL(new Blob([JSON.stringify(report, null, 2)], { type: 'application/json' }))
+  const link = document.createElement('a'); link.href = url; link.download = `abl-${report.file?.name || 'report'}.json`; link.click(); URL.revokeObjectURL(url)
+}
+
 function App() {
-  const audioRef = useRef<HTMLAudioElement>(null)
-  const inputRef = useRef<HTMLInputElement>(null)
-  const objectUrlRef = useRef<string | null>(null)
+  const input = useRef<HTMLInputElement>(null)
   const [file, setFile] = useState<File | null>(null)
-  const [sourceUrl, setSourceUrl] = useState('')
-  const [media, setMedia] = useState<MediaSnapshot | null>(null)
-  const [decoded, setDecoded] = useState<DecodeResult | null>(null)
-  const [seekTarget, setSeekTarget] = useState(5)
-  const [seekResult, setSeekResult] = useState<SeekResult | null>(null)
-  const [isDecoding, setIsDecoding] = useState(false)
-  const [isSeeking, setIsSeeking] = useState(false)
+  const [report, setReport] = useState<AudioBrowserReport | null>(null)
+  const [busy, setBusy] = useState(false)
   const [dragging, setDragging] = useState(false)
-  const [message, setMessage] = useState('Choose an audio file or use the reference tone.')
-  const [logs, setLogs] = useState<LogEntry[]>([])
+  const [status, setStatus] = useState('Drop an audio file to begin. It stays on this device.')
+  const [remoteUrl, setRemoteUrl] = useState('')
+  const [network, setNetwork] = useState<NetworkEvidence | null>(null)
+  const [comparison, setComparison] = useState<ReportComparison | null>(null)
+  const codecs = useMemo(getCodecSignals, [])
 
-  const codecSupport = useMemo(() => {
-    const audio = document.createElement('audio')
-    return codecTests.map(([label, mime]) => ({ label, mime, result: audio.canPlayType(mime) || 'no' }))
-  }, [])
-
-  const browser = useMemo(() => {
-    const nav = navigator as NavigatorWithMemory
-    return {
-      userAgent: navigator.userAgent,
-      platform: navigator.platform || 'Unavailable',
-      language: navigator.language,
-      cores: navigator.hardwareConcurrency || null,
-      memoryGb: nav.deviceMemory || null,
-      crossOriginIsolated: window.crossOriginIsolated,
-      audioContext: Boolean(window.AudioContext),
-      mediaCapabilities: 'mediaCapabilities' in navigator,
-    }
-  }, [])
-
-  useEffect(() => () => {
-    if (objectUrlRef.current) URL.revokeObjectURL(objectUrlRef.current)
-  }, [])
-
-  const addLog = (event: string, detail?: string) => {
-    setLogs((current) => [{ at: new Date().toISOString(), event, detail }, ...current].slice(0, 30))
-  }
-
-  const snapshotMedia = () => {
-    const audio = audioRef.current
-    if (!audio) return null
-    const next = {
-      duration: Number.isFinite(audio.duration) ? audio.duration : null,
-      readyState: audio.readyState,
-      networkState: audio.networkState,
-      seekable: rangesToArray(audio.seekable),
-      buffered: rangesToArray(audio.buffered),
-    }
-    setMedia(next)
-    return next
-  }
-
-  const loadFile = (nextFile: File) => {
-    if (!nextFile.type.startsWith('audio/') && !/\.(mp3|m4a|aac|wav|ogg|opus|flac|webm)$/i.test(nextFile.name)) {
-      setMessage('That file does not look like a supported audio asset.')
-      return
-    }
-    if (objectUrlRef.current) URL.revokeObjectURL(objectUrlRef.current)
-    objectUrlRef.current = URL.createObjectURL(nextFile)
-    setFile(nextFile)
-    setSourceUrl(objectUrlRef.current)
-    setMedia(null)
-    setDecoded(null)
-    setSeekResult(null)
-    setLogs([])
-    setMessage('File loaded locally. Start with the metadata result, then run the decoder comparison.')
-    addLog('file-selected', `${nextFile.name}, ${formatBytes(nextFile.size)}`)
-  }
-
-  const onFileInput = (event: ChangeEvent<HTMLInputElement>) => {
-    const nextFile = event.target.files?.[0]
-    if (nextFile) loadFile(nextFile)
-  }
-
-  const onDrop = (event: DragEvent<HTMLDivElement>) => {
-    event.preventDefault()
-    setDragging(false)
-    const nextFile = event.dataTransfer.files?.[0]
-    if (nextFile) loadFile(nextFile)
-  }
-
-  const decodeFile = async () => {
-    if (!file) return
-    setIsDecoding(true)
-    setMessage('Decoding the complete file with Web Audio. Large files may take a moment.')
-    const started = performance.now()
-    const context = new AudioContext()
+  const run = async (next: File) => {
+    setFile(next); setBusy(true); setReport(null); setStatus('Reading file structure, measuring two browser clocks, and probing seeks...')
     try {
-      const buffer = await context.decodeAudioData(await file.arrayBuffer())
-      const result = {
-        duration: buffer.duration,
-        sampleRate: buffer.sampleRate,
-        channels: buffer.numberOfChannels,
-        frames: buffer.length,
-        decodeMs: performance.now() - started,
-      }
-      setDecoded(result)
-      addLog('decode-complete', `${formatSeconds(result.duration)}, ${result.sampleRate} Hz`)
-      setMessage('Decode complete. Compare the two duration values and run a seek probe.')
-    } catch (error) {
-      const detail = error instanceof Error ? error.message : String(error)
-      addLog('decode-error', detail)
-      setMessage(`Web Audio could not decode this file: ${detail}`)
-    } finally {
-      await context.close()
-      setIsDecoding(false)
-    }
+      const result = await analyzeBrowserFile(next, { seekTargets: [1, 5, 10], timeoutMs: 12_000 })
+      setReport(result); setStatus(`Analysis complete. ${result.findings?.filter((finding) => finding.severity === 'error' || finding.severity === 'warning').length || 0} actionable signal(s) found.`)
+    } catch (error) { setStatus(error instanceof Error ? error.message : String(error)) } finally { setBusy(false) }
   }
-
-  const runSeekProbe = async () => {
-    const audio = audioRef.current
-    if (!audio || !media?.duration) return
-    const requested = Math.max(0, Math.min(seekTarget, media.duration - 0.001))
-    setIsSeeking(true)
-    const started = performance.now()
-    try {
-      const seeked = new Promise<void>((resolve, reject) => {
-        const timeout = window.setTimeout(() => reject(new Error('Seek timed out after 5 seconds.')), 5000)
-        audio.addEventListener('seeked', () => {
-          window.clearTimeout(timeout)
-          resolve()
-        }, { once: true })
-      })
-      audio.currentTime = requested
-      await seeked
-      const reported = audio.currentTime
-      const result = {
-        requested,
-        reported,
-        delta: reported - requested,
-        completedMs: performance.now() - started,
-      }
-      setSeekResult(result)
-      addLog('seek-probe', `${formatSeconds(requested)} requested, ${formatSeconds(reported)} reported`)
-      snapshotMedia()
-    } catch (error) {
-      const detail = error instanceof Error ? error.message : String(error)
-      addLog('seek-error', detail)
-      setMessage(detail)
-    } finally {
-      setIsSeeking(false)
-    }
+  const pick = (event: ChangeEvent<HTMLInputElement>) => { const next = event.target.files?.[0]; if (next) void run(next) }
+  const drop = (event: DragEvent) => { event.preventDefault(); setDragging(false); const next = event.dataTransfer.files?.[0]; if (next) void run(next) }
+  const probe = async () => {
+    if (!remoteUrl) return
+    setStatus('Checking response headers and a real byte-range request...')
+    const result = await probeRemoteAudio(remoteUrl); setNetwork(result)
+    const findings = diagnoseReport({ schema: 'audio-browser-lab/report@0.2', generatedAt: new Date().toISOString(), network: result })
+    setStatus(findings.find((item) => item.severity === 'error' || item.severity === 'warning')?.summary || 'Remote delivery looks healthy.')
   }
-
-  const report = useMemo(() => ({
-    schema: 'audio-browser-lab/report@0.1',
-    generatedAt: new Date().toISOString(),
-    browser,
-    file: file ? { name: file.name, type: file.type, size: file.size, modified: file.lastModified } : null,
-    codecSupport,
-    htmlMediaElement: media,
-    webAudioDecode: decoded,
-    durationDifferenceSeconds: media?.duration != null && decoded ? media.duration - decoded.duration : null,
-    seekProbe: seekResult,
-    events: [...logs].reverse(),
-  }), [browser, codecSupport, decoded, file, logs, media, seekResult])
-
-  const copyReport = async () => {
-    await navigator.clipboard.writeText(JSON.stringify(report, null, 2))
-    setMessage('Diagnostic report copied to the clipboard.')
+  const compareFiles = async (event: ChangeEvent<HTMLInputElement>) => {
+    const files = [...(event.target.files || [])]; if (files.length !== 2) { setStatus('Select exactly two Audio Browser Lab JSON reports.'); return }
+    try { setComparison(compareReports(JSON.parse(await files[0].text()), JSON.parse(await files[1].text()))) } catch { setStatus('One of those files is not a valid report.') }
   }
+  const issues = report?.findings?.filter((finding) => finding.severity !== 'pass') || []
 
-  const downloadReport = () => {
-    const blob = new Blob([JSON.stringify(report, null, 2)], { type: 'application/json' })
-    const url = URL.createObjectURL(blob)
-    const link = document.createElement('a')
-    link.href = url
-    link.download = `audio-browser-report-${Date.now()}.json`
-    link.click()
-    URL.revokeObjectURL(url)
-    setMessage('Diagnostic report downloaded.')
-  }
+  return <main>
+    <header className="site-header">
+      <a className="brand" href="#top"><span className="pixel-mark">ABL</span><span>Audio Browser Lab</span></a>
+      <span className="privacy-chip"><i /> LOCAL ONLY</span>
+    </header>
 
-  const durationDifference = media?.duration != null && decoded ? media.duration - decoded.duration : null
+    <section className="hero" id="top">
+      <div>
+        <p className="kicker">A Flygon LC developer utility</p>
+        <h1>STOP GUESSING.<br/><span>MEASURE THE AUDIO.</span></h1>
+        <p className="lede">One file. Two browser clocks. Exact MP3 structure. Seek evidence you can compare across Chrome, Firefox, and Safari.</p>
+        <div className="hero-actions"><button className="pixel-button primary" onClick={() => input.current?.click()}>ANALYZE A FILE</button><button className="pixel-button" onClick={() => void run(referenceTone())}>RUN DEMO</button></div>
+      </div>
+      <aside className="mission-card"><span className="tiny-label">CURRENT MISSION</span><strong>{busy ? 'SCANNING...' : report ? 'REPORT READY' : 'AWAITING AUDIO'}</strong><p>{status}</p><div className="scan-line"><span style={{ width: busy ? '65%' : report ? '100%' : '12%' }} /></div></aside>
+    </section>
 
-  return (
-    <main>
-      <header className="site-header">
-        <a className="brand" href="#top" aria-label="Audio Browser Lab home">
-          <span className="brand-mark" aria-hidden="true">ABL</span>
-          <span>Audio Browser Lab</span>
-        </a>
-        <span className="privacy-chip"><span aria-hidden="true">●</span> Local-only analysis</span>
-      </header>
+    <section className={`drop-zone ${dragging ? 'dragging' : ''}`} onDragEnter={() => setDragging(true)} onDragLeave={() => setDragging(false)} onDragOver={(e) => e.preventDefault()} onDrop={drop}>
+      <span className="pixel-upload">↑</span><div><span className="tiny-label">01 / INPUT</span><h2>{file?.name || 'DROP AUDIO HERE'}</h2><p>{file ? `${fmtBytes(file.size)} · ${file.type || 'unknown MIME'}` : 'MP3, M4A, WAV, OGG, OPUS, FLAC, OR WEBM'}</p></div><button className="pixel-button dark" onClick={() => input.current?.click()}>CHOOSE FILE</button>
+      <input ref={input} className="sr-only" type="file" accept="audio/*,.flac,.opus" onChange={pick}/>
+    </section>
 
-      <section className="hero" id="top">
-        <div>
-          <p className="eyebrow">Browser audio diagnostics</p>
-          <h1>Same timestamp.<br />Different browser?</h1>
-          <p className="hero-copy">
-            Inspect what the browser reports, what Web Audio decodes, and what happens when it seeks. Your file never leaves this device.
-          </p>
-        </div>
-        <div className="status-card" aria-live="polite">
-          <span className="status-label">Lab status</span>
-          <strong>{file ? 'Asset ready' : 'Waiting for an asset'}</strong>
-          <p>{message}</p>
-        </div>
-      </section>
+    <section className="section-shell">
+      <div className="section-title"><div><span className="tiny-label">02 / VERDICT</span><h2>WHAT THE EVIDENCE SAYS</h2></div>{report && <button className="pixel-button" onClick={() => downloadJson(report)}>DOWNLOAD JSON</button>}</div>
+      <div className="clock-grid">
+        <article className="clock"><span>NATIVE MEDIA</span><strong>{fmtTime(report?.media?.duration)}</strong><small>HTMLMediaElement timeline</small></article>
+        <article className="clock"><span>DECODED PCM</span><strong>{fmtTime(report?.webAudio?.duration)}</strong><small>Web Audio timeline</small></article>
+        <article className="clock accent"><span>DELTA</span><strong>{fmtTime(report?.media?.duration != null && report?.webAudio?.duration != null ? report.media.duration - report.webAudio.duration : null)}</strong><small>50 ms or more matters</small></article>
+      </div>
+      <div className="finding-grid">
+        {(report?.findings || [{ id: 'waiting', severity: 'info', title: 'Load an asset to generate a verdict', summary: 'The lab will inspect the file and browser independently.', confidence: 'high', questionId: '', evidence: [] }]).map((finding) => <article className={`finding ${finding.severity}`} key={finding.id}><span className="finding-level">{finding.severity}</span><h3>{finding.title}</h3><p>{finding.summary}</p>{finding.recommendation && <div className="fix"><b>FIX</b>{finding.recommendation}</div>}</article>)}
+      </div>
+    </section>
 
-      <section className="workspace" aria-label="Audio test workspace">
-        <div
-          className={`drop-zone ${dragging ? 'is-dragging' : ''}`}
-          onDragEnter={() => setDragging(true)}
-          onDragLeave={() => setDragging(false)}
-          onDragOver={(event) => event.preventDefault()}
-          onDrop={onDrop}
-        >
-          <div className="drop-icon" aria-hidden="true">↥</div>
-          <div>
-            <p className="step-label">01 / LOAD</p>
-            <h2>Choose an audio file</h2>
-            <p>MP3, M4A, WAV, OGG, Opus, FLAC, or WebM. Nothing is uploaded.</p>
-          </div>
-          <div className="button-row">
-            <button className="button primary" onClick={() => inputRef.current?.click()}>Choose file</button>
-            <button className="button secondary" onClick={() => loadFile(createTestTone())}>Use test tone</button>
-          </div>
-          <input ref={inputRef} className="visually-hidden" type="file" accept="audio/*,.flac,.opus" onChange={onFileInput} />
-        </div>
+    <section className="section-shell compact">
+      <div className="section-title"><div><span className="tiny-label">03 / FILE FORENSICS</span><h2>WHAT IS INSIDE THE MP3?</h2></div></div>
+      <div className="data-board">
+        <dl><div><dt>Recognized</dt><dd>{report?.mp3 ? String(report.mp3.recognized) : 'N/A'}</dd></div><div><dt>Bitrate mode</dt><dd>{report?.mp3?.bitrateMode || 'N/A'}</dd></div><div><dt>Seek index</dt><dd>{report?.mp3?.seekTable?.kind || (report?.mp3?.recognized ? 'MISSING' : 'N/A')}</dd></div><div><dt>First frame</dt><dd>{report?.mp3?.firstFrame?.offset ?? 'N/A'}</dd></div><div><dt>ID3v2 bytes</dt><dd>{report?.mp3?.id3v2.totalBytes ?? 'N/A'}</dd></div><div><dt>PCM memory</dt><dd>{fmtBytes(report?.webAudio?.estimatedPcmBytes)}</dd></div></dl>
+        <div className="howler-answer"><span className="tiny-label">THE HOWLER QUESTION</span><h3>Why can the same timestamp play different audio?</h3><p>{issues.find((item) => item.questionId === 'howler-cross-browser-seek')?.summary || 'The tool separates Howler from the browser, compares native and decoded clocks, checks the MP3 seek index, and fingerprints decoded audio near requested timestamps. That tells you whether the cause is the asset, browser decoder, player backend, or application offsets.'}</p></div>
+      </div>
+    </section>
 
-        {sourceUrl && (
-          <div className="player-panel">
-            <div className="file-summary">
-              <span className="file-type">{file?.name.split('.').pop()?.toUpperCase() || 'AUDIO'}</span>
-              <div>
-                <strong>{file?.name}</strong>
-                <span>{file ? `${formatBytes(file.size)} · ${file.type || 'unknown MIME type'}` : ''}</span>
-              </div>
-            </div>
-            <audio
-              ref={audioRef}
-              controls
-              preload="metadata"
-              src={sourceUrl}
-              onLoadedMetadata={() => {
-                const next = snapshotMedia()
-                if (next?.duration) setSeekTarget(Math.min(5, next.duration / 2))
-                addLog('loadedmetadata', `duration ${formatSeconds(next?.duration)}`)
-              }}
-              onDurationChange={() => { snapshotMedia(); addLog('durationchange') }}
-              onCanPlay={() => { snapshotMedia(); addLog('canplay') }}
-              onError={() => { snapshotMedia(); addLog('media-error', audioRef.current?.error?.message) }}
-            />
-          </div>
-        )}
-      </section>
+    <section className="dark-section">
+      <div className="section-shell compact">
+        <div className="section-title"><div><span className="tiny-label lime">04 / QUESTION DECK</span><h2>EIGHT BUGS THIS LAB CAN ANSWER</h2></div></div>
+        <div className="question-grid">{questionCatalog.map((question, index) => <details key={question.id}><summary><b>{String(index + 1).padStart(2, '0')}</b>{question.title}</summary><p>{question.shortAnswer}</p><small>NEEDS: {question.evidenceNeeded.join(' · ')}</small></details>)}</div>
+      </div>
+    </section>
 
-      <section className="results" aria-label="Test results">
-        <div className="section-heading">
-          <div>
-            <p className="eyebrow">Measurements</p>
-            <h2>Two clocks, one file</h2>
-          </div>
-          <button className="button secondary" disabled={!file || isDecoding} onClick={decodeFile}>
-            {isDecoding ? 'Decoding…' : decoded ? 'Decode again' : 'Run Web Audio decode'}
-          </button>
-        </div>
+    <section className="section-shell tools">
+      <div className="section-title"><div><span className="tiny-label">05 / DELIVERY CHECK</span><h2>PROBE A REMOTE FILE</h2></div></div>
+      <div className="url-row"><input aria-label="Remote audio URL" value={remoteUrl} onChange={(e) => setRemoteUrl(e.target.value)} placeholder="https://example.com/audio.mp3"/><button className="pixel-button dark" onClick={() => void probe()}>CHECK RANGE</button></div>
+      {network && <dl className="network-grid"><div><dt>Status</dt><dd>{network.status}</dd></div><div><dt>Content-Type</dt><dd>{network.contentType || 'missing'}</dd></div><div><dt>Accept-Ranges</dt><dd>{network.acceptRanges || 'missing'}</dd></div><div><dt>Range response</dt><dd>{network.rangeRequestStatus || 'failed'}</dd></div></dl>}
+      <div className="compare-box"><div><span className="tiny-label">CROSS-BROWSER COMPARE</span><h3>SELECT TWO REPORTS</h3><p>Use the same audio file in two browsers, export both reports, then compare independent timelines.</p></div><label className="pixel-button">CHOOSE 2 JSON FILES<input className="sr-only" type="file" accept="application/json,.json" multiple onChange={compareFiles}/></label>{comparison && <strong className={comparison.compatible ? 'ok' : 'warn'}>{comparison.summary}</strong>}</div>
+    </section>
 
-        <div className="metric-grid">
-          <article className="metric-card">
-            <span className="metric-index">A</span>
-            <p>HTML media duration</p>
-            <strong>{formatSeconds(media?.duration)}</strong>
-            <small>The timeline reported by the audio element.</small>
-          </article>
-          <article className="metric-card">
-            <span className="metric-index">B</span>
-            <p>Decoded duration</p>
-            <strong>{formatSeconds(decoded?.duration)}</strong>
-            <small>{decoded ? `${decoded.frames.toLocaleString()} frames at the context's ${decoded.sampleRate.toLocaleString()} Hz rate` : 'Decode the complete file to measure PCM audio.'}</small>
-          </article>
-          <article className={`metric-card ${durationDifference && Math.abs(durationDifference) > 0.05 ? 'attention' : ''}`}>
-            <span className="metric-index">Δ</span>
-            <p>Difference</p>
-            <strong>{formatSeconds(durationDifference)}</strong>
-            <small>{durationDifference == null ? 'Available after both clocks are measured.' : Math.abs(durationDifference) <= 0.05 ? 'The two browser timelines closely agree.' : 'Worth comparing in another browser.'}</small>
-          </article>
-        </div>
+    <section className="surface-strip"><div className="section-shell"><span className="tiny-label">USE IT YOUR WAY</span><div className="surface-grid">{[['WEB LAB','Zero install'],['NPM SDK','Embed analysis'],['HOWLER ADAPTER','Capture backend evidence'],['WAVESURFER ADAPTER','Compare waveform clocks'],['CLI','Inspect in CI'],['HTTP API','Connect any stack'],['MCP SERVER','Give agents the tools']].map(([title, copy]) => <div key={title}><b>{title}</b><span>{copy}</span></div>)}</div></div></section>
 
-        <div className="lab-grid">
-          <article className="panel">
-            <div className="panel-heading">
-              <div><p className="step-label">02 / SEEK</p><h3>Seek probe</h3></div>
-              <span className="tag">HTMLMediaElement</span>
-            </div>
-            <p className="panel-copy">Ask the browser to jump to an exact second, then record where it says it landed and how long the seek took.</p>
-            <label className="field-label" htmlFor="seek-target">Target time in seconds</label>
-            <div className="field-row">
-              <input id="seek-target" type="number" min="0" step="0.001" value={seekTarget} onChange={(event) => setSeekTarget(event.target.valueAsNumber || 0)} />
-              <button className="button primary" disabled={!media?.duration || isSeeking} onClick={runSeekProbe}>{isSeeking ? 'Seeking…' : 'Run probe'}</button>
-            </div>
-            <dl className="data-list">
-              <div><dt>Requested</dt><dd>{formatSeconds(seekResult?.requested)}</dd></div>
-              <div><dt>Reported</dt><dd>{formatSeconds(seekResult?.reported)}</dd></div>
-              <div><dt>Delta</dt><dd>{formatSeconds(seekResult?.delta)}</dd></div>
-              <div><dt>Completed in</dt><dd>{seekResult ? `${seekResult.completedMs.toFixed(1)} ms` : 'Unavailable'}</dd></div>
-            </dl>
-          </article>
-
-          <article className="panel">
-            <div className="panel-heading">
-              <div><p className="step-label">03 / SUPPORT</p><h3>Codec signals</h3></div>
-              <span className="tag">canPlayType</span>
-            </div>
-            <p className="panel-copy">These are browser promises, not proof. “Probably” is encouraging; a real file test is stronger.</p>
-            <div className="codec-list">
-              {codecSupport.map((codec) => (
-                <div key={codec.mime}>
-                  <span><strong>{codec.label}</strong><small>{codec.mime}</small></span>
-                  <span className={`support ${codec.result}`}>{codec.result}</span>
-                </div>
-              ))}
-            </div>
-          </article>
-        </div>
-      </section>
-
-      <section className="environment">
-        <div className="section-heading compact">
-          <div><p className="eyebrow">Environment</p><h2>What ran the test</h2></div>
-        </div>
-        <div className="environment-grid">
-          <dl className="data-list wide">
-            <div><dt>Platform</dt><dd>{browser.platform}</dd></div>
-            <div><dt>Language</dt><dd>{browser.language}</dd></div>
-            <div><dt>CPU threads</dt><dd>{browser.cores ?? 'Unavailable'}</dd></div>
-            <div><dt>Device memory</dt><dd>{browser.memoryGb ? `${browser.memoryGb} GB` : 'Unavailable'}</dd></div>
-          </dl>
-          <div className="ua-block"><span>User agent</span><code>{browser.userAgent}</code></div>
-        </div>
-      </section>
-
-      <section className="report-panel">
-        <div>
-          <p className="eyebrow">Portable evidence</p>
-          <h2>Run it again somewhere else.</h2>
-          <p>Open this lab in Chrome, Firefox, and Safari with the same file. Export each report and compare the numbers instead of guessing.</p>
-        </div>
-        <div className="button-row">
-          <button className="button light" onClick={copyReport}>Copy report</button>
-          <button className="button outline-light" onClick={downloadReport}>Download JSON</button>
-        </div>
-      </section>
-
-      <footer>
-        <span>Audio Browser Lab · v0.1</span>
-        <span>Local-first. No uploads. No analytics.</span>
-      </footer>
-    </main>
-  )
+    <footer><div className="flygon-lockup"><img src="/flygon-logo.png" alt="Flygon LC"/><span>A FLYGON LC PROJECT</span></div><span>v0.1 · PRIVATE BY DEFAULT · NO ANALYTICS</span></footer>
+  </main>
 }
 
 export default App
