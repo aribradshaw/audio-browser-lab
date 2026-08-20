@@ -4,7 +4,9 @@ Browser-audio forensics without guesswork. Audio Browser Lab inspects the asset,
 
 **[Open the web lab](https://aribradshaw.github.io/audio-browser-lab/)**
 
-It is a Flygon LC project with a local-first rule: selected audio never leaves the browser. The CLI and MCP server read local files directly. No account, analytics, or hosted backend is required.
+**[Read the public DevLog](https://aribradshaw.github.io/audio-browser-lab/devlog/)**
+
+It is a Flygon LC project with a local-first rule: audio files selected in the web lab are analyzed in your browser and are not uploaded. The CLI and MCP server read local files directly. No account, usage tracking, or hosted backend is required.
 
 ## The Howler question
 
@@ -44,6 +46,10 @@ npm run dev
 ```
 
 Open `http://127.0.0.1:4173`. Choose an audio file, export its report, repeat in another browser, then select both JSON files in the comparison panel.
+
+## Release practice
+
+Public updates use a three-part semantic version such as `0.1.1`. Every version must have a plain-English entry in `config/devlog-releases.json`; `npm run release:check` keeps the package and public DevLog in sync. The newest entry appears first at `/devlog/`.
 
 ### CLI
 

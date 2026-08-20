@@ -1,0 +1,26 @@
+[
+  {
+    "version": "0.1.1",
+    "date": "2026-08-19",
+    "title": "A clearer lab on every screen",
+    "summary": "Rebuilt the public experience around a faster path from audio file to useful evidence.",
+    "notes": [
+      "Introduced a responsive navigation, tighter information hierarchy, and more legible diagnostic panels.",
+      "Added this public DevLog and connected every page through a shared footer.",
+      "Aligned package metadata and public copyright with the MIT-licensed Flygon LC project."
+    ],
+    "commit": "main"
+  },
+  {
+    "version": "0.1.0",
+    "date": "2026-08-19",
+    "title": "The full toolkit leaves the bench",
+    "summary": "Turned the browser experiment into an installable, multi-surface audio diagnostics toolkit.",
+    "notes": [
+      "Published the web lab with local-only file analysis and portable JSON reports.",
+      "Added browser, Howler, WaveSurfer, CLI, HTTP API, and MCP integration surfaces.",
+      "Documented the cross-browser Howler seek problem and the evidence needed to isolate it."
+    ],
+    "commit": "a7a6aca32b99f669bba2c1e24f20fdea06736b40"
+  }
+]

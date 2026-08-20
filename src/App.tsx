@@ -1,6 +1,7 @@
 import { ChangeEvent, DragEvent, useMemo, useRef, useState } from 'react'
 import { analyzeBrowserFile, getCodecSignals, probeRemoteAudio } from '@audio-browser-lab/browser'
 import { compareReports, diagnoseReport, questionCatalog, type AudioBrowserReport, type NetworkEvidence, type ReportComparison } from '@audio-browser-lab/core'
+import { PageFrame } from './SiteChrome'
 
 const fmtTime = (value?: number | null) => value == null || !Number.isFinite(value) ? 'N/A' : `${value.toFixed(6)} s`
 const fmtBytes = (value?: number | null) => {
@@ -60,24 +61,21 @@ function App() {
   }
   const issues = report?.findings?.filter((finding) => finding.severity !== 'pass') || []
 
-  return <main>
-    <header className="site-header">
-      <a className="brand" href="#top"><span className="pixel-mark">ABL</span><span>Audio Browser Lab</span></a>
-      <span className="privacy-chip"><i /> LOCAL ONLY</span>
-    </header>
-
+  return <PageFrame>
+    <main id="main-content">
     <section className="hero" id="top">
       <div>
         <p className="kicker">A Flygon LC developer utility</p>
         <h1>STOP GUESSING.<br/><span>MEASURE THE AUDIO.</span></h1>
         <p className="lede">One file. Two browser clocks. Exact MP3 structure. Seek evidence you can compare across Chrome, Firefox, and Safari.</p>
         <div className="hero-actions"><button className="pixel-button primary" onClick={() => input.current?.click()}>ANALYZE A FILE</button><button className="pixel-button" onClick={() => void run(referenceTone())}>RUN DEMO</button></div>
+        <div className="hero-proof" aria-label="Lab capabilities"><span>7 integration surfaces</span><span>8 diagnostic questions</span><span>0 uploads</span></div>
       </div>
       <aside className="mission-card"><span className="tiny-label">CURRENT MISSION</span><strong>{busy ? 'SCANNING...' : report ? 'REPORT READY' : 'AWAITING AUDIO'}</strong><p>{status}</p><div className="scan-line"><span style={{ width: busy ? '65%' : report ? '100%' : '12%' }} /></div></aside>
     </section>
 
     <section className={`drop-zone ${dragging ? 'dragging' : ''}`} onDragEnter={() => setDragging(true)} onDragLeave={() => setDragging(false)} onDragOver={(e) => e.preventDefault()} onDrop={drop}>
-      <span className="pixel-upload">↑</span><div><span className="tiny-label">01 / INPUT</span><h2>{file?.name || 'DROP AUDIO HERE'}</h2><p>{file ? `${fmtBytes(file.size)} · ${file.type || 'unknown MIME'}` : 'MP3, M4A, WAV, OGG, OPUS, FLAC, OR WEBM'}</p></div><button className="pixel-button dark" onClick={() => input.current?.click()}>CHOOSE FILE</button>
+      <span className="pixel-upload" aria-hidden="true">↑</span><div><span className="tiny-label">01 / INPUT</span><h2>{file?.name || 'DROP AUDIO HERE'}</h2><p>{file ? `${fmtBytes(file.size)} · ${file.type || 'unknown MIME'}` : 'MP3, M4A, WAV, OGG, OPUS, FLAC, OR WEBM'}</p></div><button className="pixel-button dark" onClick={() => input.current?.click()}>CHOOSE FILE</button>
       <input ref={input} className="sr-only" type="file" accept="audio/*,.flac,.opus" onChange={pick}/>
     </section>
 
@@ -101,7 +99,7 @@ function App() {
       </div>
     </section>
 
-    <section className="dark-section">
+    <section className="dark-section" id="questions">
       <div className="section-shell compact">
         <div className="section-title"><div><span className="tiny-label lime">04 / QUESTION DECK</span><h2>EIGHT BUGS THIS LAB CAN ANSWER</h2></div></div>
         <div className="question-grid">{questionCatalog.map((question, index) => <details key={question.id}><summary><b>{String(index + 1).padStart(2, '0')}</b>{question.title}</summary><p>{question.shortAnswer}</p><small>NEEDS: {question.evidenceNeeded.join(' · ')}</small></details>)}</div>
@@ -117,8 +115,8 @@ function App() {
 
     <section className="surface-strip"><div className="section-shell"><span className="tiny-label">USE IT YOUR WAY</span><div className="surface-grid">{[['WEB LAB','Zero install'],['NPM SDK','Embed analysis'],['HOWLER ADAPTER','Capture backend evidence'],['WAVESURFER ADAPTER','Compare waveform clocks'],['CLI','Inspect in CI'],['HTTP API','Connect any stack'],['MCP SERVER','Give agents the tools']].map(([title, copy]) => <div key={title}><b>{title}</b><span>{copy}</span></div>)}</div></div></section>
 
-    <footer><div className="flygon-lockup"><img src={`${import.meta.env.BASE_URL}flygon-logo.png`} alt="Flygon LC"/><span>A FLYGON LC PROJECT</span></div><span>v0.1 · PRIVATE BY DEFAULT · NO ANALYTICS</span></footer>
-  </main>
+    </main>
+  </PageFrame>
 }
 
 export default App

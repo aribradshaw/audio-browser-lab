@@ -1,7 +1,7 @@
 {
   "name": "audio-browser-lab",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.1.1",
   "type": "module",
   "bin": {
     "abl": "packages/cli/dist/index.js",
@@ -12,7 +12,7 @@
     "type": "git",
     "url": "git+https://github.com/aribradshaw/audio-browser-lab.git"
   },
-  "homepage": "https://github.com/aribradshaw/audio-browser-lab#readme",
+  "homepage": "https://aribradshaw.github.io/audio-browser-lab/",
   "bugs": {
     "url": "https://github.com/aribradshaw/audio-browser-lab/issues"
   },
@@ -30,7 +30,8 @@
     "dev": "vite",
     "build": "npm run build:packages && tsc -b && vite build",
     "build:packages": "npm run build -w @audio-browser-lab/core --if-present && npm run build -w @audio-browser-lab/browser --if-present && npm run build -w @audio-browser-lab/howler --if-present && npm run build -w @audio-browser-lab/wavesurfer --if-present && npm run build -w @audio-browser-lab/cli --if-present && npm run build -w @audio-browser-lab/api --if-present && npm run build -w @audio-browser-lab/mcp --if-present",
-    "check": "npm run build:packages && npm run check --workspaces --if-present && tsc -b --pretty false",
+    "check": "npm run release:check && npm run build:packages && npm run check --workspaces --if-present && tsc -b --pretty false",
+    "release:check": "node scripts/check-release.mjs",
     "test": "vitest run",
     "test:watch": "vitest",
     "preview": "vite preview",
@@ -60,6 +61,6 @@
     "doc": "docs"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC"
+  "author": "Flygon LC",
+  "license": "MIT"
 }
