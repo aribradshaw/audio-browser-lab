@@ -1,5 +1,5 @@
-import { ChangeEvent, DragEvent, useMemo, useRef, useState } from 'react'
-import { analyzeBrowserFile, getCodecSignals, probeRemoteAudio } from '@audio-browser-lab/browser'
+import { ChangeEvent, DragEvent, useRef, useState } from 'react'
+import { analyzeBrowserFile, probeRemoteAudio } from '@audio-browser-lab/browser'
 import { compareReports, diagnoseReport, questionCatalog, type AudioBrowserReport, type NetworkEvidence, type ReportComparison } from '@audio-browser-lab/core'
 import { PageFrame } from './SiteChrome'
 
@@ -40,8 +40,6 @@ function App() {
   const [network, setNetwork] = useState<NetworkEvidence | null>(null)
   const [comparison, setComparison] = useState<ReportComparison | null>(null)
   const [openQuestionIds, setOpenQuestionIds] = useState<string[]>([])
-  const codecs = useMemo(getCodecSignals, [])
-
   const run = async (next: File) => {
     setFile(next); setBusy(true); setError(null); setReport(null); setCopyStatus('COPY SUMMARY'); setStatus('Reading file structure, measuring two browser clocks, and probing seeks...')
     try {

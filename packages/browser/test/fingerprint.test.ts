@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { fingerprintPcm } from '../src'
+import { buildSeekPlan, fingerprintPcm } from '../src'
 
 describe('fingerprintPcm', () => {
   it('is deterministic and changes with the audible window', () => {
@@ -11,5 +11,15 @@ describe('fingerprintPcm', () => {
     expect(first.fingerprint).toBe(repeated.fingerprint)
     expect(first.fingerprint).not.toBe(silence.fingerprint)
     expect(first.rms).toBeGreaterThan(0.7)
+  })
+
+  it('builds repeated seek probes with bounded attempts', () => {
+    expect(buildSeekPlan([10, 146.52], 2)).toEqual([
+      { target: 10, attempt: 1 },
+      { target: 10, attempt: 2 },
+      { target: 146.52, attempt: 1 },
+      { target: 146.52, attempt: 2 },
+    ])
+    expect(buildSeekPlan([10], 99)).toHaveLength(10)
   })
 })
