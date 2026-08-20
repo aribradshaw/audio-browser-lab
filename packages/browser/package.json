@@ -1,6 +1,6 @@
 {
   "name": "@audio-browser-lab/browser",
-  "version": "1.0.14",
+  "version": "1.0.15",
   "description": "Browser audio measurement SDK for Audio Browser Lab.",
   "type": "module",
   "sideEffects": false,
@@ -22,7 +22,7 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@audio-browser-lab/core": "1.0.14"
+    "@audio-browser-lab/core": "1.0.15"
   },
   "keywords": [
     "web-audio",

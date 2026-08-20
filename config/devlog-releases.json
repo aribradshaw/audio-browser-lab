@@ -1,5 +1,23 @@
 [
   {
+    "version": "1.0.15",
+    "date": "2026-08-20",
+    "releasedAt": "2026-08-20T07:05:33.111Z",
+    "commit": "00354f99e110feda771524fcae51403a065a618d",
+    "sourceSubject": "ci: invoke trusted npm CLI without global install",
+    "title": "invoke trusted npm CLI without global install",
+    "summary": "Production now includes: invoke trusted npm CLI without global install.",
+    "notes": [
+      "invoke trusted npm CLI without global install"
+    ],
+    "author": {
+      "name": "Ari Bradshaw",
+      "githubLogin": "aribradshaw",
+      "avatarUrl": null,
+      "profileUrl": null
+    }
+  },
+  {
     "version": "1.0.14",
     "date": "2026-08-20",
     "releasedAt": "2026-08-20T07:02:18.642Z",
