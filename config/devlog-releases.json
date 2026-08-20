@@ -1,5 +1,23 @@
 [
   {
+    "version": "1.0.13",
+    "date": "2026-08-19",
+    "releasedAt": "2026-08-20T06:58:42.666Z",
+    "commit": "296bf64af17680865b8bc4d6ec3605f6cfee8b87",
+    "sourceSubject": "ci: publish npm packages with OIDC",
+    "title": "publish npm packages with OIDC",
+    "summary": "Production now includes: publish npm packages with OIDC.",
+    "notes": [
+      "publish npm packages with OIDC"
+    ],
+    "author": {
+      "name": "Ari Bradshaw",
+      "githubLogin": "aribradshaw",
+      "avatarUrl": null,
+      "profileUrl": null
+    }
+  },
+  {
     "version": "1.0.12",
     "date": "2026-08-19",
     "releasedAt": "2026-08-20T06:44:54.787Z",
