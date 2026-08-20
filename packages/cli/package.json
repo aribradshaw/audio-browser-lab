@@ -4,12 +4,15 @@
   "description": "Command-line audio structure inspection and browser report diagnostics.",
   "type": "module",
   "bin": { "abl": "./dist/index.js" },
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "exports": { ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js" } },
+  "main": "./dist/library.js",
+  "types": "./dist/library.d.ts",
+  "exports": {
+    ".": { "types": "./dist/library.d.ts", "import": "./dist/library.js" },
+    "./library": { "types": "./dist/library.d.ts", "import": "./dist/library.js" }
+  },
   "files": ["dist", "README.md"],
   "scripts": {
-    "build": "tsup src/index.ts --format esm --dts --clean",
+    "build": "tsup",
     "check": "tsc --noEmit",
     "test": "vitest run"
   },

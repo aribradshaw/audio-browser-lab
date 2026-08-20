@@ -8,7 +8,7 @@
   "types": "./dist/index.d.ts",
   "exports": { ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js" } },
   "files": ["dist", "README.md"],
-  "scripts": { "build": "tsup src/index.ts --format esm --dts --clean", "check": "tsc --noEmit", "test": "vitest run" },
+  "scripts": { "build": "tsup", "check": "tsc --noEmit", "test": "vitest run" },
   "dependencies": {
     "@audio-browser-lab/cli": "*",
     "@audio-browser-lab/core": "*",

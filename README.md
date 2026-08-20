@@ -56,6 +56,13 @@ npm run abl -- inspect-url https://example.com/problem.mp3
 npm run abl -- compare chrome.json safari.json
 ```
 
+Install the repository as a Git dependency in another project to expose the `abl` and `audio-browser-lab-mcp` binaries immediately:
+
+```sh
+npm install --save-dev github:aribradshaw/audio-browser-lab
+npx abl inspect ./problem.mp3
+```
+
 ### SDK
 
 ```ts
@@ -91,18 +98,22 @@ Routes: `GET /health`, `GET /v1/questions`, `POST /v1/diagnose`, `POST /v1/compa
 
 ### MCP
 
+After the Git dependency install above:
+
 ```json
 {
   "mcpServers": {
     "audio-browser-lab": {
       "command": "npx",
-      "args": ["-y", "@audio-browser-lab/mcp"]
+      "args": ["audio-browser-lab-mcp"]
     }
   }
 }
 ```
 
 The server exposes `inspect_audio_file`, `diagnose_audio_report`, `compare_browser_reports`, `inspect_remote_audio`, `list_audio_questions`, and `generate_repair_plan`.
+
+The seven scoped packages are independently built, typed, licensed, and ready for npm publication. They are not claimed as npm-hosted until the `@audio-browser-lab` scope is connected to a publisher account.
 
 ## Questions covered
 

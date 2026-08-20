@@ -3,7 +3,7 @@ import { readFile } from 'node:fs/promises'
 import { McpServer } from '@modelcontextprotocol/server'
 import { serveStdio } from '@modelcontextprotocol/server/stdio'
 import { z } from 'zod'
-import { inspectFile, inspectUrl, repairPlan } from '@audio-browser-lab/cli'
+import { inspectFile, inspectUrl, repairPlan } from '@audio-browser-lab/cli/library'
 import { compareReports, diagnoseReport, questionCatalog, type AudioBrowserReport } from '@audio-browser-lab/core'
 
 const jsonText = (value: unknown) => ({ content: [{ type: 'text' as const, text: JSON.stringify(value, null, 2) }], structuredContent: value as Record<string, unknown> })

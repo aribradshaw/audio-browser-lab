@@ -3,12 +3,27 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
+  "bin": {
+    "abl": "packages/cli/dist/index.js",
+    "audio-browser-lab-mcp": "packages/mcp/dist/index.js"
+  },
   "description": "A local-first browser audio compatibility and diagnostics workbench.",
-  "repository": { "type": "git", "url": "git+https://github.com/aribradshaw/audio-browser-lab.git" },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aribradshaw/audio-browser-lab.git"
+  },
   "homepage": "https://github.com/aribradshaw/audio-browser-lab#readme",
-  "bugs": { "url": "https://github.com/aribradshaw/audio-browser-lab/issues" },
+  "bugs": {
+    "url": "https://github.com/aribradshaw/audio-browser-lab/issues"
+  },
   "workspaces": [
     "packages/*"
+  ],
+  "files": [
+    "packages/cli/dist",
+    "packages/mcp/dist",
+    "README.md",
+    "LICENSE"
   ],
   "scripts": {
     "predev": "npm run build:packages",
@@ -19,11 +34,10 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "preview": "vite preview",
-    "abl": "node packages/cli/dist/index.js"
+    "abl": "node packages/cli/dist/index.js",
+    "prepare": "npm run build:packages"
   },
   "dependencies": {
-    "@audio-browser-lab/browser": "*",
-    "@audio-browser-lab/core": "*",
     "react": "^19.2.8",
     "react-dom": "^19.2.8"
   },
@@ -40,5 +54,12 @@
   },
   "overrides": {
     "esbuild": "^0.28.1"
-  }
+  },
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
 }
