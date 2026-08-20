@@ -2,6 +2,8 @@
 
 Browser-audio forensics without guesswork. Audio Browser Lab inspects the asset, measures independent browser clocks, probes real seeks and HTTP range delivery, and produces portable evidence for cross-browser comparison.
 
+**[Open the web lab](https://aribradshaw.github.io/audio-browser-lab/)**
+
 It is a Flygon LC project with a local-first rule: selected audio never leaves the browser. The CLI and MCP server read local files directly. No account, analytics, or hosted backend is required.
 
 ## The Howler question

@@ -117,7 +117,7 @@ function App() {
 
     <section className="surface-strip"><div className="section-shell"><span className="tiny-label">USE IT YOUR WAY</span><div className="surface-grid">{[['WEB LAB','Zero install'],['NPM SDK','Embed analysis'],['HOWLER ADAPTER','Capture backend evidence'],['WAVESURFER ADAPTER','Compare waveform clocks'],['CLI','Inspect in CI'],['HTTP API','Connect any stack'],['MCP SERVER','Give agents the tools']].map(([title, copy]) => <div key={title}><b>{title}</b><span>{copy}</span></div>)}</div></div></section>
 
-    <footer><div className="flygon-lockup"><img src="/flygon-logo.png" alt="Flygon LC"/><span>A FLYGON LC PROJECT</span></div><span>v0.1 · PRIVATE BY DEFAULT · NO ANALYTICS</span></footer>
+    <footer><div className="flygon-lockup"><img src={`${import.meta.env.BASE_URL}flygon-logo.png`} alt="Flygon LC"/><span>A FLYGON LC PROJECT</span></div><span>v0.1 · PRIVATE BY DEFAULT · NO ANALYTICS</span></footer>
   </main>
 }
 
