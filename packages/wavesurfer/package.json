@@ -1,25 +1,56 @@
 {
   "name": "@audio-browser-lab/wavesurfer",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "wavesurfer.js diagnostics adapter for Audio Browser Lab.",
   "type": "module",
   "sideEffects": false,
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "exports": { ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js" } },
-  "files": ["dist", "README.md"],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
   "scripts": {
     "build": "tsup src/index.ts --format esm --dts --clean --external @audio-browser-lab/core",
     "check": "tsc --noEmit",
     "test": "vitest run"
   },
-  "dependencies": { "@audio-browser-lab/core": "1.0.9" },
-  "peerDependencies": { "wavesurfer.js": ">=7.0.0" },
-  "peerDependenciesMeta": { "wavesurfer.js": { "optional": true } },
-  "keywords": ["wavesurfer", "audio", "browser-audio", "debugging", "diagnostics", "waveform"],
+  "dependencies": {
+    "@audio-browser-lab/core": "1.0.10"
+  },
+  "peerDependencies": {
+    "wavesurfer.js": ">=7.0.0"
+  },
+  "peerDependenciesMeta": {
+    "wavesurfer.js": {
+      "optional": true
+    }
+  },
+  "keywords": [
+    "wavesurfer",
+    "audio",
+    "browser-audio",
+    "debugging",
+    "diagnostics",
+    "waveform"
+  ],
   "license": "MIT",
-  "repository": { "type": "git", "url": "git+https://github.com/aribradshaw/audio-browser-lab.git", "directory": "packages/wavesurfer" },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aribradshaw/audio-browser-lab.git",
+    "directory": "packages/wavesurfer"
+  },
   "homepage": "https://aribradshaw.github.io/audio-browser-lab/docs/",
-  "bugs": { "url": "https://github.com/aribradshaw/audio-browser-lab/issues" },
-  "publishConfig": { "access": "public" }
+  "bugs": {
+    "url": "https://github.com/aribradshaw/audio-browser-lab/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
 }

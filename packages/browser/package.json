@@ -1,6 +1,6 @@
 {
   "name": "@audio-browser-lab/browser",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "Browser audio measurement SDK for Audio Browser Lab.",
   "type": "module",
   "sideEffects": false,
@@ -12,19 +12,36 @@
       "import": "./dist/index.js"
     }
   },
-  "files": ["dist", "README.md"],
+  "files": [
+    "dist",
+    "README.md"
+  ],
   "scripts": {
     "build": "tsup src/index.ts --format esm --dts --clean --external @audio-browser-lab/core",
     "check": "tsc --noEmit",
     "test": "vitest run"
   },
   "dependencies": {
-    "@audio-browser-lab/core": "1.0.9"
+    "@audio-browser-lab/core": "1.0.10"
   },
-  "keywords": ["web-audio", "htmlmediaelement", "browser", "audio", "diagnostics"],
+  "keywords": [
+    "web-audio",
+    "htmlmediaelement",
+    "browser",
+    "audio",
+    "diagnostics"
+  ],
   "license": "MIT",
-  "repository": { "type": "git", "url": "git+https://github.com/aribradshaw/audio-browser-lab.git", "directory": "packages/browser" },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aribradshaw/audio-browser-lab.git",
+    "directory": "packages/browser"
+  },
   "homepage": "https://aribradshaw.github.io/audio-browser-lab/docs/",
-  "bugs": { "url": "https://github.com/aribradshaw/audio-browser-lab/issues" },
-  "publishConfig": { "access": "public" }
+  "bugs": {
+    "url": "https://github.com/aribradshaw/audio-browser-lab/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
 }

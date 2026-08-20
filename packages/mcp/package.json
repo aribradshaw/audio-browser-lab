@@ -1,26 +1,59 @@
 {
   "name": "@audio-browser-lab/mcp",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "MCP server that gives coding agents evidence-based browser audio diagnostics.",
   "type": "module",
-  "bin": { "audio-browser-lab-mcp": "dist/index.js" },
+  "bin": {
+    "audio-browser-lab-mcp": "dist/index.js"
+  },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "exports": { ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js" } },
-  "files": ["dist", "README.md"],
-  "scripts": { "build": "tsup", "check": "tsc --noEmit", "test": "vitest run" },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "check": "tsc --noEmit",
+    "test": "vitest run"
+  },
   "dependencies": {
-    "@audio-browser-lab/cli": "1.0.9",
-    "@audio-browser-lab/core": "1.0.9",
+    "@audio-browser-lab/cli": "1.0.10",
+    "@audio-browser-lab/core": "1.0.10",
     "@modelcontextprotocol/server": "^2.0.0",
     "zod": "^4.4.3"
   },
-  "devDependencies": { "@modelcontextprotocol/client": "^2.0.0" },
-  "keywords": ["audio", "mp3", "mcp", "model-context-protocol", "debugging", "diagnostics"],
+  "devDependencies": {
+    "@modelcontextprotocol/client": "^2.0.0"
+  },
+  "keywords": [
+    "audio",
+    "mp3",
+    "mcp",
+    "model-context-protocol",
+    "debugging",
+    "diagnostics"
+  ],
   "license": "MIT",
-  "repository": { "type": "git", "url": "git+https://github.com/aribradshaw/audio-browser-lab.git", "directory": "packages/mcp" },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aribradshaw/audio-browser-lab.git",
+    "directory": "packages/mcp"
+  },
   "homepage": "https://aribradshaw.github.io/audio-browser-lab/docs/",
-  "bugs": { "url": "https://github.com/aribradshaw/audio-browser-lab/issues" },
-  "publishConfig": { "access": "public" },
-  "engines": { "node": ">=20" }
+  "bugs": {
+    "url": "https://github.com/aribradshaw/audio-browser-lab/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": ">=20"
+  }
 }

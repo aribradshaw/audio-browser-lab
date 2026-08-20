@@ -1,5 +1,23 @@
 [
   {
+    "version": "1.0.10",
+    "date": "2026-08-19",
+    "releasedAt": "2026-08-20T06:29:14.198Z",
+    "commit": "fdbe7df07abd34f2503429c420083032042c0bd0",
+    "sourceSubject": "Automate production version and DevLog releases",
+    "title": "Automate production version and DevLog releases",
+    "summary": "Production now includes: Automate production version and DevLog releases.",
+    "notes": [
+      "Automate production version and DevLog releases"
+    ],
+    "author": {
+      "name": "Ari Bradshaw",
+      "githubLogin": "aribradshaw",
+      "avatarUrl": null,
+      "profileUrl": null
+    }
+  },
+  {
     "version": "1.0.9",
     "date": "2026-08-19",
     "title": "Make every install path executable",
@@ -12,7 +30,9 @@
     "commit": null,
     "author": {
       "name": "Ari Bradshaw",
-      "githubLogin": "aribradshaw"
+      "githubLogin": "aribradshaw",
+      "avatarUrl": null,
+      "profileUrl": null
     }
   },
   {
@@ -28,7 +48,9 @@
     "commit": null,
     "author": {
       "name": "Ari Bradshaw",
-      "githubLogin": "aribradshaw"
+      "githubLogin": "aribradshaw",
+      "avatarUrl": null,
+      "profileUrl": null
     }
   },
   {
@@ -44,7 +66,9 @@
     "commit": null,
     "author": {
       "name": "Ari Bradshaw",
-      "githubLogin": "aribradshaw"
+      "githubLogin": "aribradshaw",
+      "avatarUrl": null,
+      "profileUrl": null
     }
   },
   {
@@ -60,7 +84,9 @@
     "commit": null,
     "author": {
       "name": "Ari Bradshaw",
-      "githubLogin": "aribradshaw"
+      "githubLogin": "aribradshaw",
+      "avatarUrl": null,
+      "profileUrl": null
     }
   },
   {
@@ -78,7 +104,9 @@
     "commit": "e1f9f073b1137363b036c94421cd2b8386a19a95",
     "author": {
       "name": "Ari Bradshaw",
-      "githubLogin": "aribradshaw"
+      "githubLogin": "aribradshaw",
+      "avatarUrl": null,
+      "profileUrl": null
     }
   },
   {
@@ -94,7 +122,9 @@
     "commit": "544870a06c29d481c789a4b5aa99d86765b3526f",
     "author": {
       "name": "Ari Bradshaw",
-      "githubLogin": "aribradshaw"
+      "githubLogin": "aribradshaw",
+      "avatarUrl": null,
+      "profileUrl": null
     }
   },
   {
@@ -109,7 +139,9 @@
     "commit": "23c3dfa89e98045d1c4d4fff2ce8ff9d9fe5b8e4",
     "author": {
       "name": "Ari Bradshaw",
-      "githubLogin": "aribradshaw"
+      "githubLogin": "aribradshaw",
+      "avatarUrl": null,
+      "profileUrl": null
     }
   },
   {
@@ -125,7 +157,9 @@
     "commit": "ae8d86a622d93f9bfb97b03a79897a20fbf39a5a",
     "author": {
       "name": "Ari Bradshaw",
-      "githubLogin": "aribradshaw"
+      "githubLogin": "aribradshaw",
+      "avatarUrl": null,
+      "profileUrl": null
     }
   },
   {
@@ -141,7 +175,9 @@
     "commit": "a7a6aca32b99f669bba2c1e24f20fdea06736b40",
     "author": {
       "name": "Ari Bradshaw",
-      "githubLogin": "aribradshaw"
+      "githubLogin": "aribradshaw",
+      "avatarUrl": null,
+      "profileUrl": null
     }
   }
 ]
