@@ -1,5 +1,23 @@
 [
   {
+    "version": "1.0.14",
+    "date": "2026-08-20",
+    "releasedAt": "2026-08-20T07:02:18.642Z",
+    "commit": "a1403d1a164f23cfb3830277b34610d6ee64c5fb",
+    "sourceSubject": "ci: dispatch trusted npm publication",
+    "title": "dispatch trusted npm publication",
+    "summary": "Production now includes: dispatch trusted npm publication.",
+    "notes": [
+      "dispatch trusted npm publication"
+    ],
+    "author": {
+      "name": "Ari Bradshaw",
+      "githubLogin": "aribradshaw",
+      "avatarUrl": null,
+      "profileUrl": null
+    }
+  },
+  {
     "version": "1.0.13",
     "date": "2026-08-19",
     "releasedAt": "2026-08-20T06:58:42.666Z",
