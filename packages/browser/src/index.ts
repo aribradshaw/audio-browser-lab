@@ -16,6 +16,7 @@ type NavigatorWithMemory = Navigator & { deviceMemory?: number }
 export interface AnalyzeBrowserFileOptions {
   decode?: boolean
   seekTargets?: number[]
+  seekRepeats?: number
   timeoutMs?: number
 }
 
@@ -104,7 +105,14 @@ export function fingerprintAudioBuffer(buffer: AudioBuffer, timeSeconds: number,
   return fingerprintPcm(channels, buffer.sampleRate, timeSeconds, windowMs)
 }
 
-async function measureMedia(url: string, seekTargets: number[], timeoutMs: number): Promise<{ media: MediaElementEvidence; seeks: SeekEvidence[] }> {
+export function buildSeekPlan(seekTargets: number[], seekRepeats = 1): Array<{ target: number, attempt: number }> {
+  const repeats = Math.max(1, Math.min(10, Math.floor(seekRepeats) || 1))
+  return seekTargets
+    .filter((target) => Number.isFinite(target) && target >= 0)
+    .flatMap((target) => Array.from({ length: repeats }, (_, index) => ({ target, attempt: index + 1 })))
+}
+
+async function measureMedia(url: string, seekTargets: number[], seekRepeats: number, timeoutMs: number): Promise<{ media: MediaElementEvidence; seeks: SeekEvidence[] }> {
   const audio = new Audio()
   audio.preload = 'metadata'
   audio.src = url
@@ -126,7 +134,7 @@ async function measureMedia(url: string, seekTargets: number[], timeoutMs: numbe
     buffered: rangesToArray(audio.buffered),
   }
   const seeks: SeekEvidence[] = []
-  for (const target of seekTargets) {
+  for (const { target, attempt } of buildSeekPlan(seekTargets, seekRepeats)) {
     if (!media.duration) break
     const requested = Math.max(0, Math.min(target, media.duration - 0.001))
     const started = performance.now()
@@ -135,9 +143,9 @@ async function measureMedia(url: string, seekTargets: number[], timeoutMs: numbe
         audio.addEventListener('seeked', () => resolve(), { once: true })
         audio.currentTime = requested
       }), timeoutMs, `Seek to ${requested} seconds timed out.`)
-      seeks.push({ requested, reported: audio.currentTime, delta: audio.currentTime - requested, completedMs: performance.now() - started })
+      seeks.push({ requested, reported: audio.currentTime, delta: audio.currentTime - requested, attempt, completedMs: performance.now() - started })
     } catch {
-      seeks.push({ requested, reported: audio.currentTime, delta: audio.currentTime - requested, completedMs: performance.now() - started })
+      seeks.push({ requested, reported: audio.currentTime, delta: audio.currentTime - requested, attempt, completedMs: performance.now() - started })
     }
   }
   audio.removeAttribute('src')
@@ -146,10 +154,10 @@ async function measureMedia(url: string, seekTargets: number[], timeoutMs: numbe
 }
 
 export async function analyzeBrowserFile(file: File, options: AnalyzeBrowserFileOptions = {}): Promise<AudioBrowserReport> {
-  const { decode = true, seekTargets = [5], timeoutMs = 10_000 } = options
+  const { decode = true, seekTargets = [5], seekRepeats = 1, timeoutMs = 10_000 } = options
   const data = await file.arrayBuffer()
   const objectUrl = URL.createObjectURL(file)
-  const { media, seeks } = await measureMedia(objectUrl, seekTargets, timeoutMs)
+  const { media, seeks } = await measureMedia(objectUrl, seekTargets, seekRepeats, timeoutMs)
   let webAudio: WebAudioEvidence | null = null
   if (decode) {
     const context = new AudioContext()

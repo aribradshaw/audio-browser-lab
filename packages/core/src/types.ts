@@ -52,6 +52,7 @@ export interface SeekEvidence {
   requested: number
   reported: number
   delta: number
+  attempt?: number
   completedMs?: number
   audibleFingerprint?: string
 }

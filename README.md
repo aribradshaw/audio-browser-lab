@@ -47,7 +47,7 @@ npm install
 npm run dev
 ```
 
-Open `http://127.0.0.1:4173`. Choose an audio file, export its report, repeat in another browser, then select both JSON files in the comparison panel. The build generates a sitemap for the public lab and DevLog pages.
+Open `http://127.0.0.1:4173`. Choose an audio file, export its report, repeat in another browser, then select both JSON files in the comparison panel. The build generates a sitemap for the public lab, documentation, and DevLog pages.
 
 ## Release practice
 
@@ -78,6 +78,7 @@ import { analyzeBrowserFile } from '@audio-browser-lab/browser'
 
 const report = await analyzeBrowserFile(file, {
   seekTargets: [1, 30, 120],
+  seekRepeats: 3,
 })
 ```
 
@@ -143,6 +144,7 @@ npm run build
 - [Reusable DevLog architecture](docs/DEVLOG-PILOT.md)
 - [Integrations](docs/INTEGRATION.md)
 - [Howler case study](docs/HOWLER-CASE-STUDY.md)
+- [GitHub issue opportunities](docs/GITHUB-ISSUE-OPPORTUNITIES.md)
 - [Diagnostic questions](docs/QUESTIONS.md)
 - [Contributing](CONTRIBUTING.md)
 - [Security](SECURITY.md)
