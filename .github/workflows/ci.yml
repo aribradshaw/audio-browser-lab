@@ -14,6 +14,10 @@ jobs:
   test:
     if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
+    outputs:
+      release_version: ${{ steps.persist_release.outputs.version }}
+      release_sha: ${{ steps.persist_release.outputs.release_sha }}
+      source_sha: ${{ steps.persist_release.outputs.source_sha }}
     steps:
       - uses: actions/checkout@v7
         with:
@@ -46,6 +50,7 @@ jobs:
       - run: npm run build
       - run: npm run pack:check
       - name: Persist generated release metadata
+        id: persist_release
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         shell: bash
         run: |
@@ -59,6 +64,9 @@ jobs:
             git commit -m "chore(release): Audio Browser Lab v${VERSION}"
             git push origin "HEAD:${{ github.ref_name }}"
           fi
+          echo "version=$(node -p 'require("./package.json").version')" >> "$GITHUB_OUTPUT"
+          echo "release_sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+          echo "source_sha=${{ github.sha }}" >> "$GITHUB_OUTPUT"
       - name: Upload Pages artifact
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: actions/upload-pages-artifact@v5
@@ -75,3 +83,63 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v5
+  publish-release:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && github.actor != 'github-actions[bot]'
+    needs: [test, deploy]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          ref: ${{ needs.test.outputs.release_sha }}
+      - name: Verify or create the release tag
+        shell: bash
+        env:
+          RELEASE_VERSION: ${{ needs.test.outputs.release_version }}
+          RELEASE_SHA: ${{ needs.test.outputs.release_sha }}
+        run: |
+          set -euo pipefail
+          TAG="v${RELEASE_VERSION}"
+          git fetch origin --force --tags
+          if git rev-parse --verify --quiet "refs/tags/${TAG}" >/dev/null; then
+            EXISTING_SHA="$(git rev-list -n 1 "${TAG}")"
+            if [ "${EXISTING_SHA}" != "${RELEASE_SHA}" ]; then
+              echo "${TAG} points to ${EXISTING_SHA}, expected ${RELEASE_SHA}." >&2
+              exit 1
+            fi
+            echo "${TAG} already points to the generated release commit."
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git tag -a "${TAG}" "${RELEASE_SHA}" -m "Audio Browser Lab ${TAG}"
+            git push origin "refs/tags/${TAG}"
+          fi
+      - name: Publish the GitHub Release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_VERSION: ${{ needs.test.outputs.release_version }}
+          RELEASE_SHA: ${{ needs.test.outputs.release_sha }}
+          SOURCE_SHA: ${{ needs.test.outputs.source_sha }}
+        run: |
+          set -euo pipefail
+          TAG="v${RELEASE_VERSION}"
+          if gh release view "${TAG}" --repo "${GITHUB_REPOSITORY}" >/dev/null 2>&1; then
+            echo "GitHub Release ${TAG} already exists."
+            exit 0
+          fi
+          SHORT_SOURCE="${SOURCE_SHA:0:7}"
+          NOTES_FILE="$(mktemp)"
+          trap 'rm -f "${NOTES_FILE}"' EXIT
+          {
+            echo "Production release ${TAG}."
+            echo
+            echo "- Source commit: [${SHORT_SOURCE}](https://github.com/${GITHUB_REPOSITORY}/commit/${SOURCE_SHA})"
+            echo "- Release commit: [${RELEASE_SHA:0:7}](https://github.com/${GITHUB_REPOSITORY}/commit/${RELEASE_SHA})"
+            echo "- [Public DevLog](https://aribradshaw.github.io/audio-browser-lab/devlog/)"
+          } > "${NOTES_FILE}"
+          gh release create "${TAG}" \
+            --repo "${GITHUB_REPOSITORY}" \
+            --verify-tag \
+            --title "Audio Browser Lab ${TAG}" \
+            --notes-file "${NOTES_FILE}"
