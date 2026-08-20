@@ -11,7 +11,7 @@ import {
   type DiagnosticFinding,
 } from '@audio-browser-lab/core'
 
-export const VERSION = '1.0.15'
+export const VERSION = '1.0.16'
 
 const usage = `Audio Browser Lab CLI
 

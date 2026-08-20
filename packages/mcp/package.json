@@ -1,6 +1,6 @@
 {
   "name": "@audio-browser-lab/mcp",
-  "version": "1.0.15",
+  "version": "1.0.16",
   "description": "MCP server that gives coding agents evidence-based browser audio diagnostics.",
   "type": "module",
   "bin": {
@@ -24,8 +24,8 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@audio-browser-lab/cli": "1.0.15",
-    "@audio-browser-lab/core": "1.0.15",
+    "@audio-browser-lab/cli": "1.0.16",
+    "@audio-browser-lab/core": "1.0.16",
     "@modelcontextprotocol/server": "^2.0.0",
     "zod": "^4.4.3"
   },

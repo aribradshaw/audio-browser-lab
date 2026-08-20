@@ -1,6 +1,6 @@
 {
   "name": "@audio-browser-lab/cli",
-  "version": "1.0.15",
+  "version": "1.0.16",
   "description": "Command-line audio structure inspection and browser report diagnostics.",
   "type": "module",
   "bin": {
@@ -28,7 +28,7 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@audio-browser-lab/core": "1.0.15"
+    "@audio-browser-lab/core": "1.0.16"
   },
   "keywords": [
     "audio",

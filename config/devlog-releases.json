@@ -1,5 +1,23 @@
 [
   {
+    "version": "1.0.16",
+    "date": "2026-08-20",
+    "releasedAt": "2026-08-20T07:30:49.491Z",
+    "commit": "64c7f120b39b7ac8cd7f59a4918026b65c0efa14",
+    "sourceSubject": "feat: add runnable integrations and fixture library",
+    "title": "add runnable integrations and fixture library",
+    "summary": "Production now includes: add runnable integrations and fixture library.",
+    "notes": [
+      "add runnable integrations and fixture library"
+    ],
+    "author": {
+      "name": "Ari Bradshaw",
+      "githubLogin": "aribradshaw",
+      "avatarUrl": null,
+      "profileUrl": null
+    }
+  },
+  {
     "version": "1.0.15",
     "date": "2026-08-20",
     "releasedAt": "2026-08-20T07:05:33.111Z",

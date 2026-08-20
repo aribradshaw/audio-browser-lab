@@ -1,7 +1,7 @@
 {
   "name": "audio-browser-lab",
   "private": true,
-  "version": "1.0.15",
+  "version": "1.0.16",
   "type": "module",
   "bin": {
     "abl": "packages/cli/dist/index.js",
