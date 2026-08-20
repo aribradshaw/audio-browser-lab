@@ -1,6 +1,6 @@
 {
   "name": "@audio-browser-lab/wavesurfer",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "description": "wavesurfer.js diagnostics adapter for Audio Browser Lab.",
   "type": "module",
   "sideEffects": false,
@@ -22,7 +22,7 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@audio-browser-lab/core": "1.0.11"
+    "@audio-browser-lab/core": "1.0.12"
   },
   "peerDependencies": {
     "wavesurfer.js": ">=7.0.0"

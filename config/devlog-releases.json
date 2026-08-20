@@ -1,5 +1,23 @@
 [
   {
+    "version": "1.0.12",
+    "date": "2026-08-19",
+    "releasedAt": "2026-08-20T06:44:54.787Z",
+    "commit": "9250a99483bb9fa8fbafa2441da326585610ccfd",
+    "sourceSubject": "ci: publish GitHub releases after deploy",
+    "title": "publish GitHub releases after deploy",
+    "summary": "Production now includes: publish GitHub releases after deploy.",
+    "notes": [
+      "publish GitHub releases after deploy"
+    ],
+    "author": {
+      "name": "Ari Bradshaw",
+      "githubLogin": "aribradshaw",
+      "avatarUrl": null,
+      "profileUrl": null
+    }
+  },
+  {
     "version": "1.0.11",
     "date": "2026-08-19",
     "releasedAt": "2026-08-20T06:36:29.562Z",
