@@ -9,28 +9,21 @@ function SkeletonBar({ className = '' }: { className?: string }) {
 }
 
 function PageSkeleton({ page = 'lab' }: { page?: SitePage }) {
-  const isDevlog = page === 'devlog'
-
-  return <main id="main-content" className={`page-skeleton ${isDevlog ? 'devlog-page' : ''}`} aria-busy="true" aria-label="Loading page">
+  if (page === 'devlog') return <main id="main-content" className="page-skeleton devlog-page" aria-busy="true" aria-label="Loading page">
     <section className="skeleton-hero">
-      <div className="skeleton-copy">
-        <SkeletonBar className="skeleton-kicker" />
-        <SkeletonBar className="skeleton-title" />
-        <SkeletonBar className="skeleton-title skeleton-title-short" />
-        <SkeletonBar className="skeleton-lede" />
-        <div className="skeleton-actions"><SkeletonBar className="skeleton-action" /><SkeletonBar className="skeleton-action" /></div>
-      </div>
+      <div className="skeleton-copy"><SkeletonBar className="skeleton-kicker" /><SkeletonBar className="skeleton-title" /><SkeletonBar className="skeleton-title skeleton-title-short" /><SkeletonBar className="skeleton-lede" /></div>
       <div className="skeleton-card"><SkeletonBar className="skeleton-card-label" /><SkeletonBar className="skeleton-card-title" /><SkeletonBar className="skeleton-card-copy" /><SkeletonBar className="skeleton-card-copy short" /></div>
     </section>
+    <section className="skeleton-section skeleton-history"><SkeletonBar className="skeleton-kicker" /><SkeletonBar className="skeleton-heading" /><div className="skeleton-release-list"><SkeletonBar /><SkeletonBar /><SkeletonBar /></div></section>
+    <section className="skeleton-cta"><SkeletonBar className="skeleton-heading" /><SkeletonBar className="skeleton-action" /></section>
+  </main>
 
-    {isDevlog ? <>
-      <section className="skeleton-section skeleton-history"><SkeletonBar className="skeleton-kicker" /><SkeletonBar className="skeleton-heading" /><div className="skeleton-release-list"><SkeletonBar /><SkeletonBar /><SkeletonBar /></div></section>
-      <section className="skeleton-cta"><SkeletonBar className="skeleton-heading" /><SkeletonBar className="skeleton-action" /></section>
-    </> : <>
-      <section className="skeleton-drop"><SkeletonBar className="skeleton-icon" /><div><SkeletonBar className="skeleton-kicker" /><SkeletonBar className="skeleton-heading" /><SkeletonBar className="skeleton-copy-line" /></div><SkeletonBar className="skeleton-action" /></section>
-      <section className="skeleton-section"><SkeletonBar className="skeleton-kicker" /><SkeletonBar className="skeleton-heading" /><div className="skeleton-grid"><SkeletonBar /><SkeletonBar /><SkeletonBar /></div></section>
-      <section className="skeleton-section skeleton-section-dark"><SkeletonBar className="skeleton-kicker" /><SkeletonBar className="skeleton-heading" /><div className="skeleton-grid"><SkeletonBar /><SkeletonBar /><SkeletonBar /><SkeletonBar /></div></section>
-    </>}
+  return <main id="main-content" className="page-skeleton" aria-busy="true" aria-label="Loading page">
+    <section className="skeleton-workspace">
+      <div className="skeleton-workspace-intro"><SkeletonBar className="skeleton-kicker" /><SkeletonBar className="skeleton-title" /><SkeletonBar className="skeleton-title skeleton-title-short" /><SkeletonBar className="skeleton-lede" /></div>
+      <div className="skeleton-workspace-grid"><div className="skeleton-panel"><SkeletonBar className="skeleton-kicker" /><SkeletonBar className="skeleton-heading" /><SkeletonBar className="skeleton-drop-line" /><div className="skeleton-actions"><SkeletonBar className="skeleton-action" /><SkeletonBar className="skeleton-action" /></div><SkeletonBar className="skeleton-panel-status" /></div><div className="skeleton-panel"><SkeletonBar className="skeleton-kicker" /><SkeletonBar className="skeleton-heading" /><div className="skeleton-grid"><SkeletonBar /><SkeletonBar /><SkeletonBar /></div><SkeletonBar className="skeleton-panel-status" /></div></div>
+    </section>
+    <section className="skeleton-section"><SkeletonBar className="skeleton-kicker" /><SkeletonBar className="skeleton-heading" /><div className="skeleton-grid"><SkeletonBar /><SkeletonBar /><SkeletonBar /></div></section>
   </main>
 }
 

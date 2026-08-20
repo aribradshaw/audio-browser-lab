@@ -62,40 +62,47 @@ function App() {
   const issues = report?.findings?.filter((finding) => finding.severity !== 'pass') || []
 
   return <PageFrame>
-    <main id="main-content">
-    <section className="hero" id="top">
-      <div>
-        <p className="kicker">A Flygon LC developer utility</p>
-        <h1>STOP GUESSING.<br/><span>MEASURE THE AUDIO.</span></h1>
-        <p className="lede">One file. Two browser clocks. Exact MP3 structure. Seek evidence you can compare across Chrome, Firefox, and Safari.</p>
-        <div className="hero-actions"><button className="pixel-button primary" onClick={() => input.current?.click()}>ANALYZE A FILE</button><button className="pixel-button" onClick={() => void run(referenceTone())}>RUN DEMO</button></div>
-        <div className="hero-proof" aria-label="Lab capabilities"><span>7 integration surfaces</span><span>8 diagnostic questions</span><span>0 uploads</span></div>
+    <main id="main-content" className="home-page">
+    <section className="workspace-shell" id="top">
+      <div className="workspace-intro">
+        <div>
+          <p className="kicker">A Flygon LC developer utility</p>
+          <h1>MEASURE THE AUDIO.<br/><span>SEE THE EVIDENCE.</span></h1>
+          <p className="workspace-lede">Drop a file or run the demo. The lab measures browser clocks, decodes the audio, and gives you a result you can act on.</p>
+        </div>
+        <div className="workspace-proof" aria-label="Lab capabilities"><span>0 uploads</span><span>2 browser clocks</span><span>8 diagnostic paths</span></div>
       </div>
-      <aside className="mission-card"><span className="tiny-label">CURRENT MISSION</span><strong>{busy ? 'SCANNING...' : report ? 'REPORT READY' : 'AWAITING AUDIO'}</strong><p>{status}</p><div className="scan-line"><span style={{ width: busy ? '65%' : report ? '100%' : '12%' }} /></div></aside>
-    </section>
-
-    <section className={`drop-zone ${dragging ? 'dragging' : ''}`} onDragEnter={() => setDragging(true)} onDragLeave={() => setDragging(false)} onDragOver={(e) => e.preventDefault()} onDrop={drop}>
-      <span className="pixel-upload" aria-hidden="true">↑</span><div><span className="tiny-label">01 / INPUT</span><h2>{file?.name || 'DROP AUDIO HERE'}</h2><p>{file ? `${fmtBytes(file.size)} · ${file.type || 'unknown MIME'}` : 'MP3, M4A, WAV, OGG, OPUS, FLAC, OR WEBM'}</p></div><button className="pixel-button dark" onClick={() => input.current?.click()}>CHOOSE FILE</button>
-      <input ref={input} className="sr-only" type="file" accept="audio/*,.flac,.opus" onChange={pick}/>
-    </section>
-
-    <section className="section-shell">
-      <div className="section-title"><div><span className="tiny-label">02 / VERDICT</span><h2>WHAT THE EVIDENCE SAYS</h2></div>{report && <button className="pixel-button" onClick={() => downloadJson(report)}>DOWNLOAD JSON</button>}</div>
-      <div className="clock-grid">
-        <article className="clock"><span>NATIVE MEDIA</span><strong>{fmtTime(report?.media?.duration)}</strong><small>HTMLMediaElement timeline</small></article>
-        <article className="clock"><span>DECODED PCM</span><strong>{fmtTime(report?.webAudio?.duration)}</strong><small>Web Audio timeline</small></article>
-        <article className="clock accent"><span>DELTA</span><strong>{fmtTime(report?.media?.duration != null && report?.webAudio?.duration != null ? report.media.duration - report.webAudio.duration : null)}</strong><small>50 ms or more matters</small></article>
+      <div className="workspace-grid">
+        <section className={`workspace-input ${dragging ? 'dragging' : ''}`} onDragEnter={() => setDragging(true)} onDragLeave={() => setDragging(false)} onDragOver={(e) => e.preventDefault()} onDrop={drop} aria-labelledby="input-title">
+          <div className="workspace-panel-heading"><div><span className="tiny-label">01 / INPUT</span><h2 id="input-title">{file?.name || 'DROP AUDIO HERE'}</h2><p>{file ? `${fmtBytes(file.size)} - ${file.type || 'unknown MIME'}` : 'MP3, M4A, WAV, OGG, OPUS, FLAC, OR WEBM'}</p></div><span className="workspace-state">{file ? 'LOADED' : 'LOCAL'}</span></div>
+          <div className="workspace-drop-target"><span className="pixel-upload" aria-hidden="true">&#8593;</span><span>{dragging ? 'Release to analyze' : 'Drop a file here or choose one below'}</span></div>
+          <div className="workspace-actions"><button className="pixel-button primary" onClick={() => input.current?.click()}>ANALYZE A FILE</button><button className="pixel-button" onClick={() => void run(referenceTone())}>RUN DEMO</button></div>
+          <aside className="mission-card"><span className="tiny-label">CURRENT MISSION</span><strong>{busy ? 'SCANNING...' : report ? 'REPORT READY' : 'AWAITING AUDIO'}</strong><p>{status}</p><div className="scan-line"><span style={{ width: busy ? '65%' : report ? '100%' : '12%' }} /></div></aside>
+          <input ref={input} className="sr-only" type="file" accept="audio/*,.flac,.opus" onChange={pick}/>
+        </section>
+        <section className="workspace-results" aria-labelledby="verdict-title" aria-live="polite">
+          <div className="workspace-panel-heading"><div><span className="tiny-label">02 / VERDICT</span><h2 id="verdict-title">EVIDENCE AT A GLANCE</h2></div>{report && <button className="text-button" onClick={() => downloadJson(report)}>DOWNLOAD JSON</button>}</div>
+          <div className="clock-grid workspace-clock-grid">
+            <article className="clock"><span>NATIVE MEDIA</span><strong>{fmtTime(report?.media?.duration)}</strong><small>HTMLMediaElement timeline</small></article>
+            <article className="clock"><span>DECODED PCM</span><strong>{fmtTime(report?.webAudio?.duration)}</strong><small>Web Audio timeline</small></article>
+            <article className="clock accent"><span>DELTA</span><strong>{fmtTime(report?.media?.duration != null && report?.webAudio?.duration != null ? report.media.duration - report.webAudio.duration : null)}</strong><small>50 ms or more matters</small></article>
+          </div>
+          <div className={`workspace-verdict ${report ? 'ready' : ''}`}>
+            <span className="finding-level">{report ? 'VERDICT READY' : 'WAITING FOR AUDIO'}</span>
+            <strong>{busy ? 'Reading the file...' : report ? `${issues.length} actionable signal${issues.length === 1 ? '' : 's'} found` : 'Your result will appear here'}</strong>
+            <p>{report ? (issues[0]?.summary || 'No warnings found in the current evidence.') : 'Run the demo or analyze a local file to compare independent browser timelines.'}</p>
+          </div>
+        </section>
       </div>
-      <div className="finding-grid">
-        {(report?.findings || [{ id: 'waiting', severity: 'info', title: 'Load an asset to generate a verdict', summary: 'The lab will inspect the file and browser independently.', confidence: 'high', questionId: '', evidence: [] }]).map((finding) => <article className={`finding ${finding.severity}`} key={finding.id}><span className="finding-level">{finding.severity}</span><h3>{finding.title}</h3><p>{finding.summary}</p>{finding.recommendation && <div className="fix"><b>FIX</b>{finding.recommendation}</div>}</article>)}
-      </div>
     </section>
-
     <section className="section-shell compact">
       <div className="section-title"><div><span className="tiny-label">03 / FILE FORENSICS</span><h2>WHAT IS INSIDE THE MP3?</h2></div></div>
       <div className="data-board">
         <dl><div><dt>Recognized</dt><dd>{report?.mp3 ? String(report.mp3.recognized) : 'N/A'}</dd></div><div><dt>Bitrate mode</dt><dd>{report?.mp3?.bitrateMode || 'N/A'}</dd></div><div><dt>Seek index</dt><dd>{report?.mp3?.seekTable?.kind || (report?.mp3?.recognized ? 'MISSING' : 'N/A')}</dd></div><div><dt>First frame</dt><dd>{report?.mp3?.firstFrame?.offset ?? 'N/A'}</dd></div><div><dt>ID3v2 bytes</dt><dd>{report?.mp3?.id3v2.totalBytes ?? 'N/A'}</dd></div><div><dt>PCM memory</dt><dd>{fmtBytes(report?.webAudio?.estimatedPcmBytes)}</dd></div></dl>
         <div className="howler-answer"><span className="tiny-label">THE HOWLER QUESTION</span><h3>Why can the same timestamp play different audio?</h3><p>{issues.find((item) => item.questionId === 'howler-cross-browser-seek')?.summary || 'The tool separates Howler from the browser, compares native and decoded clocks, checks the MP3 seek index, and fingerprints decoded audio near requested timestamps. That tells you whether the cause is the asset, browser decoder, player backend, or application offsets.'}</p></div>
+      </div>
+      <div className="finding-grid detailed-findings">
+        {(report?.findings || [{ id: 'waiting', severity: 'info', title: 'Load an asset to generate a verdict', summary: 'The lab will inspect the file and browser independently.', confidence: 'high', questionId: '', evidence: [] }]).map((finding) => <article className={`finding ${finding.severity}`} key={finding.id}><span className="finding-level">{finding.severity}</span><h3>{finding.title}</h3><p>{finding.summary}</p>{finding.recommendation && <div className="fix"><b>FIX</b>{finding.recommendation}</div>}</article>)}
       </div>
     </section>
 

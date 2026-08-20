@@ -1,5 +1,19 @@
 [
   {
+    "version": "1.0.5",
+    "date": "2026-08-19",
+    "title": "Unify the working surface",
+    "summary": "Consolidated the homepage into one responsive audio workspace and tightened the release page opening.",
+    "notes": [
+      "Combined file input, live mission status, browser clocks, and diagnostic findings into one workspace.",
+      "Removed duplicate controls and duplicate page anchors from the homepage.",
+      "Verified the public copyright line for Flygon LC.",
+      "Removed redundant introductory copy from the DevLog hero.",
+      "Kept the public release record aligned with the shared Phoenix calendar cadence."
+    ],
+    "commit": "main"
+  },
+  {
     "version": "1.0.4",
     "date": "2026-08-19",
     "title": "Polish loading and site discovery",

@@ -14,7 +14,6 @@ export default function Devlog() {
         <div>
           <p className="kicker">Build in public</p>
           <h1>THE<br/><span>DEVLOG.</span></h1>
-          <p className="lede">A plain-English record of what changed, why it matters, and which release is live.</p>
         </div>
         <aside className="release-card" aria-label="Current release">
           <span className="tiny-label">Current release</span>
