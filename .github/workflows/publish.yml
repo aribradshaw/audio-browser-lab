@@ -1,0 +1,66 @@
+name: Publish npm packages
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: npm-publish-${{ github.event.release.tag_name }}
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    if: github.event.release.draft == false && github.event.release.prerelease == false
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.release.tag_name }}
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22.22.2
+          registry-url: https://registry.npmjs.org
+          package-manager-cache: false
+      - name: Use an npm CLI with trusted publishing support
+        run: npm install --global npm@11.19.0
+      - run: npm ci
+      - name: Verify release and package versions
+        shell: bash
+        env:
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+        run: |
+          set -euo pipefail
+          ROOT_VERSION="$(node -p 'require("./package.json").version')"
+          if [ "${RELEASE_TAG}" != "v${ROOT_VERSION}" ]; then
+            echo "Release tag ${RELEASE_TAG} does not match root version v${ROOT_VERSION}." >&2
+            exit 1
+          fi
+          for PACKAGE_DIR in packages/core packages/browser packages/howler packages/wavesurfer packages/cli packages/api packages/mcp; do
+            PACKAGE_VERSION="$(node -p "require('./${PACKAGE_DIR}/package.json').version")"
+            if [ "${PACKAGE_VERSION}" != "${ROOT_VERSION}" ]; then
+              echo "${PACKAGE_DIR} is ${PACKAGE_VERSION}, expected ${ROOT_VERSION}." >&2
+              exit 1
+            fi
+          done
+      - run: npm run check
+      - run: npm test
+      - run: npm run build
+      - run: npm run pack:check
+      - name: Publish packages in dependency order
+        shell: bash
+        run: |
+          set -euo pipefail
+          for PACKAGE_DIR in packages/core packages/browser packages/howler packages/wavesurfer packages/cli packages/api packages/mcp; do
+            PACKAGE_NAME="$(node -p "require('./${PACKAGE_DIR}/package.json').name")"
+            PACKAGE_VERSION="$(node -p "require('./${PACKAGE_DIR}/package.json').version")"
+            if npm view "${PACKAGE_NAME}@${PACKAGE_VERSION}" version >/dev/null 2>&1; then
+              echo "${PACKAGE_NAME}@${PACKAGE_VERSION} is already published."
+              continue
+            fi
+            npm publish "./${PACKAGE_DIR}" --access public
+          done
